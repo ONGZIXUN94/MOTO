@@ -17,6 +17,8 @@ public class PTT_Call extends AppCompatActivity {
     String tag = "zello";
 
     /*
+    * NOTE: You need to have zello work app (not the one from appstore) installed using this link
+    * http://mugun88.zellowork.com/app
     *
     * Sample to broadcast to everyone
     * Zello.getInstance().setSelectedChannelOrGroup("Everyone");
