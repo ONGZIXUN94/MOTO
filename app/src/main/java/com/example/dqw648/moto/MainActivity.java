@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                temp_return_string("ZIXUN");
+                temp_return_string("yang");
             }
         });
     }
