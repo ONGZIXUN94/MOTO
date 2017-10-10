@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zello.sdk.Zello;
@@ -30,10 +31,13 @@ public class PTT_Call extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ptt__call);
 
+        TextView tv_callname = (TextView) findViewById(R.id.tv_callname);
         ptt_init();
 
         Bundle from_listview = getIntent().getExtras();
         detected_username = from_listview.getString("username");
+
+        tv_callname.setText(detected_username);
 
         Button pttButton = (Button) findViewById(R.id.pttButton);
 
