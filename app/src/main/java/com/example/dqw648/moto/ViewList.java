@@ -32,8 +32,6 @@ public class ViewList extends AppCompatActivity {
             while(data.moveToNext()){
                 user = new User(data.getString(1),data.getString(2),data.getString(3));
                 userList.add(i,user);
-//                System.out.println(data.getString(1)+" "+data.getString(2)+" "+data.getString(3));
-//                System.out.println(userList.get(i).get_name());
                 i++;
             }
             ListAdapter adapter =  new ListAdapter(this,R.layout.activity_list_adapter, userList);

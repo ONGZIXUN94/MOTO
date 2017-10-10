@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MOTO</string>
+    <string name="action_settings">Settings</string>
+    <string name="done">Done</string>
+    <string name="capturing_image">Capture</string>
+    <string name="recapture_image">Re-Capture</string>
 </resources>

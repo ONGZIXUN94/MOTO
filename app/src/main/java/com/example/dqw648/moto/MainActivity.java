@@ -3,9 +3,14 @@ package com.example.dqw648.moto;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +25,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.dqw648.moto.R.id.tv_num_target;
+import static com.example.dqw648.moto.CameraView.REQUEST_IMAGE_CAPTURE;
+import static com.example.dqw648.moto.R.id.tv_coreid;
+import static com.example.dqw648.moto.R.id.tv_identity;
 import static com.example.dqw648.moto.R.id.tv_result;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static Camera mCamera;
+    private static final String TAG = "mainApp";
+    private Bitmap mCameraBitmap;
 
     //String
 
@@ -35,17 +46,18 @@ public class MainActivity extends AppCompatActivity {
 
     //ListView
     private ListView lv_identity;
-    private ArrayList<String> data_list;
 
     //DataBase
     DatabaseHelper myDB;
     ArrayList<User> userList;
+    ArrayList<User> data_list;
     ListView listView;
     User user;
+    Cur_User Cur_User;
 
     //variables
     private int count = 0;
-    public String cur_name;
+    public String cur_name, cur_coreid, cur_identity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +71,14 @@ public class MainActivity extends AppCompatActivity {
 
         //ListView
         lv_identity = (ListView) findViewById(R.id.lv_identity);
-        data_list = new ArrayList<String>();
+        data_list = new ArrayList<>();
 
         //Buttons
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                temp_return_string("yang");
+
+                startActivityForResult(new Intent(MainActivity.this, CameraView.class), REQUEST_IMAGE_CAPTURE);
             }
         });
     }
@@ -84,12 +97,15 @@ public class MainActivity extends AppCompatActivity {
             while(data.moveToNext()){
                 user = new User(data.getString(1),data.getString(2),data.getString(3));
                 if(get_name.equals(data.getString(1))){
-                    data_list.add("");
+                    data_list.clear();
                     cur_name = data.getString(1);
-                    lv_identity.setAdapter(new MyListAdapter(this, R.layout.result_after_snapshot_list, data_list));
+                    cur_coreid = data.getString(2);
+                    cur_identity = data.getString(3);
+                    data_list.add(user);
                 }
             }
 
+            lv_identity.setAdapter(new MyListAdapter(this, R.layout.result_after_snapshot_list, data_list));
         }
 
     }
@@ -111,17 +127,17 @@ public class MainActivity extends AppCompatActivity {
                 convertView = inflater.inflate(layout,parent,false);
                 ViewHolder viewHolder = new ViewHolder();
                 viewHolder.tv_result = (TextView)convertView.findViewById(tv_result);
-                viewHolder.tv_num_target = (TextView)convertView.findViewById(tv_num_target);
+                viewHolder.tv_coreid = (TextView)convertView.findViewById(tv_coreid);
+                viewHolder.tv_identity = (TextView)convertView.findViewById(tv_identity);
                 viewHolder.btn_view_result = (Button) convertView.findViewById(R.id.btn_view_result);
 
-                viewHolder.tv_result.setText(cur_name);
-                viewHolder.tv_num_target.setText(position + "");
+                viewHolder.tv_result.setText("Name: " + cur_name);
+                viewHolder.tv_coreid.setText("CoreID: " + cur_coreid);
+                viewHolder.tv_identity.setText(cur_identity);
 
                 viewHolder.btn_view_result.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(getContext(),"This is position:" + position, Toast.LENGTH_SHORT).show();
-
                         Intent ptt_interface = new Intent(MainActivity.this,PTT_Call.class);
                         ptt_interface.putExtra("username",cur_name);
                         startActivity(ptt_interface);
@@ -130,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 convertView.setTag(viewHolder);
             }else{
                 mainViewHolder = (ViewHolder) convertView.getTag();
-                mainViewHolder.tv_num_target.setText((Integer) getItem(position));
+                mainViewHolder.tv_coreid.setText((Integer) getItem(position));
             }
 
 
@@ -138,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public class ViewHolder{
-            TextView tv_num_target, tv_result;
+            TextView tv_coreid, tv_result, tv_identity;
             Button btn_view_result;
         }
     }
@@ -147,4 +163,23 @@ public class MainActivity extends AppCompatActivity {
                 Intent camera_view = new Intent(MainActivity.this, FirstResponderRegisteration.class);
                 startActivity(camera_view);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("test", "onActivityResult");
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if (resultCode == RESULT_OK) {
+                if (CameraView.mCameraData != null) {
+                    mCameraBitmap = BitmapFactory.decodeByteArray(CameraView.mCameraData, 0, CameraView.mCameraData.length);
+                    Matrix mat = new Matrix();
+                    mat.postRotate(90);
+                    mCameraBitmap = Bitmap.createBitmap(mCameraBitmap, 0, 0, mCameraBitmap.getWidth(), mCameraBitmap.getHeight(), mat, true);
+                    img_receive_snapshot.setImageBitmap(mCameraBitmap);
+                    temp_return_string("yang");
+                    Log.i("test", "onActivityResult OK");
+                }
+            }
+        }
+    }
+
 }

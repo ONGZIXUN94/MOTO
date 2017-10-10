@@ -3,6 +3,12 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
+        maven{
+            url 'https://raw.github.com/zeeshanejaz/unirest-android/mvn-repo'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
