@@ -1,7 +1,9 @@
 package com.example.dqw648.moto;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +11,8 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,7 +81,34 @@ public class MainActivity extends AppCompatActivity {
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_DENIED)
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.CAMERA},
+                            1);
+                }
+                if (ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED)
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            1);
+                }
+                if (ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_DENIED)
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            1);
+                }
+                if (ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.INTERNET)
+                        == PackageManager.PERMISSION_DENIED)
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.INTERNET},
+                            1);
+                }
                 startActivityForResult(new Intent(MainActivity.this, CameraView.class), REQUEST_IMAGE_CAPTURE);
             }
         });
@@ -164,6 +195,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(camera_view);
     }
 
+    public void imgUpload(View view){
+        Intent UploadImage = new Intent(MainActivity.this, UploadImage.class);
+        startActivity(UploadImage);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("test", "onActivityResult");

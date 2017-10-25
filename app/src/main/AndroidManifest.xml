@@ -27,6 +27,7 @@
         <activity android:name=".ViewList" />
         <activity android:name=".ListAdapter" />
         <activity android:name=".PTT_Call" />
+        <activity android:name=".UploadImage" />
         <activity android:name=".CameraView"></activity>
 
         <service android:name="com.example.dqw648.moto.httpServiceRequest"

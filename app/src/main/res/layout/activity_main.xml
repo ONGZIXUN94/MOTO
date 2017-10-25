@@ -72,5 +72,14 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintVertical_bias="1.0" />
 
+    <Button
+        android:id="@+id/button2"
+        android:onClick="imgUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UploadImage"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="461dp" />
+
 
 </android.support.constraint.ConstraintLayout>
