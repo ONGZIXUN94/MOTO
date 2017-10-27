@@ -119,151 +119,151 @@ public class UploadImage extends AppCompatActivity{
         }
     }
 
-    public void ImageUploadToServerFunction(){
+        public void ImageUploadToServerFunction(){
 
-        ByteArrayOutputStream byteArrayOutputStreamObject ;
+            ByteArrayOutputStream byteArrayOutputStreamObject ;
 
-        byteArrayOutputStreamObject = new ByteArrayOutputStream();
+            byteArrayOutputStreamObject = new ByteArrayOutputStream();
 
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStreamObject);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStreamObject);
 
-        byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
+            byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
 
-        final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
+            final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
 
-        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
+            class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
 
-            @Override
-            protected void onPreExecute() {
+                @Override
+                protected void onPreExecute() {
 
-                super.onPreExecute();
+                    super.onPreExecute();
 
-                progressDialog = ProgressDialog.show(UploadImage.this,"Image is Uploading","Please Wait",false,false);
-            }
-
-            @Override
-            protected void onPostExecute(String string1) {
-
-                super.onPostExecute(string1);
-
-                // Dismiss the progress dialog after done uploading.
-                progressDialog.dismiss();
-
-                // Printing uploading success message coming from server on android app.
-                Toast.makeText(UploadImage.this,string1,Toast.LENGTH_LONG).show();
-                Log.i("ImageUpload",string1);
-                // Setting image as transparent after done uploading.
-                imageView.setImageResource(android.R.color.transparent);
-
-
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-
-                ImageProcessClass imageProcessClass = new ImageProcessClass();
-
-                HashMap<String,String> HashMapParams = new HashMap<String,String>();
-
-                HashMapParams.put(ImageName, GetImageNameEditText);
-
-                HashMapParams.put(ImagePath, ConvertImage);
-
-                String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
-
-                return FinalData;
-            }
-        }
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-
-        AsyncTaskUploadClassOBJ.execute();
-    }
-
-    public class ImageProcessClass{
-
-        public String ImageHttpRequest(String requestURL,HashMap<String, String> PData) {
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            try {
-
-                URL url;
-                HttpURLConnection httpURLConnectionObject ;
-                OutputStream OutPutStream;
-                BufferedWriter bufferedWriterObject ;
-                BufferedReader bufferedReaderObject ;
-                int RC ;
-
-                url = new URL(requestURL);
-
-                httpURLConnectionObject = (HttpURLConnection) url.openConnection();
-
-                httpURLConnectionObject.setReadTimeout(19000);
-
-                httpURLConnectionObject.setConnectTimeout(19000);
-
-                httpURLConnectionObject.setRequestMethod("POST");
-
-                httpURLConnectionObject.setDoInput(true);
-
-                httpURLConnectionObject.setDoOutput(true);
-
-                OutPutStream = httpURLConnectionObject.getOutputStream();
-
-                bufferedWriterObject = new BufferedWriter(
-
-                        new OutputStreamWriter(OutPutStream, "UTF-8"));
-
-                bufferedWriterObject.write(bufferedWriterDataFN(PData));
-
-                bufferedWriterObject.flush();
-
-                bufferedWriterObject.close();
-
-                OutPutStream.close();
-
-                RC = httpURLConnectionObject.getResponseCode();
-
-                if (RC == HttpsURLConnection.HTTP_OK) {
-
-                    bufferedReaderObject = new BufferedReader(new InputStreamReader(httpURLConnectionObject.getInputStream()));
-
-                    stringBuilder = new StringBuilder();
-
-                    String RC2;
-
-                    while ((RC2 = bufferedReaderObject.readLine()) != null){
-
-                        stringBuilder.append(RC2);
-                    }
+                    progressDialog = ProgressDialog.show(UploadImage.this,"Image is Uploading","Please Wait",false,false);
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                @Override
+                protected void onPostExecute(String string1) {
+
+                    super.onPostExecute(string1);
+
+                    // Dismiss the progress dialog after done uploading.
+                    progressDialog.dismiss();
+
+                    // Printing uploading success message coming from server on android app.
+                    Toast.makeText(UploadImage.this,string1,Toast.LENGTH_LONG).show();
+                    Log.i("ImageUpload",string1);
+                    // Setting image as transparent after done uploading.
+                    imageView.setImageResource(android.R.color.transparent);
+
+
+                }
+
+                @Override
+                protected String doInBackground(Void... params) {
+
+                    ImageProcessClass imageProcessClass = new ImageProcessClass();
+
+                    HashMap<String,String> HashMapParams = new HashMap<String,String>();
+
+                    HashMapParams.put(ImageName, GetImageNameEditText);
+
+                    HashMapParams.put(ImagePath, ConvertImage);
+
+                    String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
+
+                    return FinalData;
+                }
             }
-            return stringBuilder.toString();
+            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+
+            AsyncTaskUploadClassOBJ.execute();
         }
 
-        private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
+        public class ImageProcessClass{
 
-            StringBuilder stringBuilderObject;
+            public String ImageHttpRequest(String requestURL,HashMap<String, String> PData) {
 
-            stringBuilderObject = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder();
 
-            for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
+                try {
 
-                if (check)
+                    URL url;
+                    HttpURLConnection httpURLConnectionObject ;
+                    OutputStream OutPutStream;
+                    BufferedWriter bufferedWriterObject ;
+                    BufferedReader bufferedReaderObject ;
+                    int RC ;
 
-                    check = false;
-                else
-                    stringBuilderObject.append("&");
+                    url = new URL(requestURL);
 
-                stringBuilderObject.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
+                    httpURLConnectionObject = (HttpURLConnection) url.openConnection();
 
-                stringBuilderObject.append("=");
+                    httpURLConnectionObject.setReadTimeout(19000);
 
-                stringBuilderObject.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
+                    httpURLConnectionObject.setConnectTimeout(19000);
+
+                    httpURLConnectionObject.setRequestMethod("POST");
+
+                    httpURLConnectionObject.setDoInput(true);
+
+                    httpURLConnectionObject.setDoOutput(true);
+
+                    OutPutStream = httpURLConnectionObject.getOutputStream();
+
+                    bufferedWriterObject = new BufferedWriter(
+
+                            new OutputStreamWriter(OutPutStream, "UTF-8"));
+
+                    bufferedWriterObject.write(bufferedWriterDataFN(PData));
+
+                    bufferedWriterObject.flush();
+
+                    bufferedWriterObject.close();
+
+                    OutPutStream.close();
+
+                    RC = httpURLConnectionObject.getResponseCode();
+
+                    if (RC == HttpsURLConnection.HTTP_OK) {
+
+                        bufferedReaderObject = new BufferedReader(new InputStreamReader(httpURLConnectionObject.getInputStream()));
+
+                        stringBuilder = new StringBuilder();
+
+                        String RC2;
+
+                        while ((RC2 = bufferedReaderObject.readLine()) != null){
+
+                            stringBuilder.append(RC2);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return stringBuilder.toString();
             }
+
+            private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
+
+                StringBuilder stringBuilderObject;
+
+                stringBuilderObject = new StringBuilder();
+
+                for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
+
+                    if (check)
+
+                        check = false;
+                    else
+                        stringBuilderObject.append("&");
+
+                    stringBuilderObject.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
+
+                    stringBuilderObject.append("=");
+
+                    stringBuilderObject.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
+                }
 
             return stringBuilderObject.toString();
         }
