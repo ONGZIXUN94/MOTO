@@ -67,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ZelloWrapper.init(this);
-        ZelloWrapper.getThisUserName();
-
         //Button
         btn_camera = (ImageButton) findViewById(R.id.btn_camera);
 
