@@ -21,12 +21,12 @@ public class ZelloWrapper {
         resetAllChannel();
     }
 
-    public static void ptt_start(){
+    public static void pttStart(){
         Zello.getInstance().beginMessage();
         Log.d(tag, "start ptt call\r\n");
     }
 
-    public static void ptt_stop(){
+    public static void pttStop(){
         Zello.getInstance().endMessage();
         Log.d(tag, "stop ptt call\r\n");
     }

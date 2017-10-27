@@ -46,9 +46,9 @@ public class PTT_Call extends AppCompatActivity {
                 if (action == MotionEvent. ACTION_DOWN ) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Transmitting...", Toast.LENGTH_SHORT);
                     toast.show();
-                    ZelloWrapper.ptt_start();
+                    ZelloWrapper.pttStart();
                 } else if (action == MotionEvent. ACTION_UP || action == MotionEvent. ACTION_CANCEL ) {
-                    ZelloWrapper.ptt_stop();
+                    ZelloWrapper.pttStop();
                     Toast toast = Toast.makeText(getApplicationContext(), "Voice message sent.", Toast.LENGTH_SHORT);
                     toast.show();
                 }
