@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap mCameraBitmap;
 
     //String
+    String user_acc_name = "seng guan";
+    String user_team;
 
     //Button
     private ImageButton btn_camera;
@@ -52,17 +54,23 @@ public class MainActivity extends AppCompatActivity {
     private ListView lv_identity;
 
     //DataBase
-    DatabaseHelper myDB;
-    ArrayList<User> userList;
+    DatabaseHelper myDB = new DatabaseHelper(this);
+    ArrayList<User> userList = new ArrayList<>();
     ArrayList<User> data_list;
-    ListView listView;
     User user;
-    Cur_User Cur_User;
+
 
     //variables
     private int count = 0;
-    public String cur_name, cur_coreid, cur_identity;
-    @Override
+//    String cur_name, cur_coreid, cur_identity, call_mode;
+    String[] cur_name = new String[10];
+    String[] cur_coreid = new String[10];
+    String[] cur_identity = new String[10];
+    String[] call_mode = new String[10];
+    int getView_count = 0;
+    int num_polis = 0;
+    int num_fireman = 0;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -77,11 +85,49 @@ public class MainActivity extends AppCompatActivity {
         lv_identity = (ListView) findViewById(R.id.lv_identity);
         data_list = new ArrayList<>();
 
+        Cursor init_data = myDB.getListContents();
+
+        //Initialization
+        int Rows = init_data.getCount();
+
+        if(user_acc_name.equals("seng guan") || user_acc_name.equals("shu yang")){
+            user_team = "polis";
+        }else{
+            user_team = "fireman";
+        }
+
+        if(Rows == 0){
+            Toast.makeText(MainActivity.this,"The Database is empty  :(.",Toast.LENGTH_LONG).show();
+        }else {
+            count = 0;
+            while (init_data.moveToNext()) {
+                user = new User(init_data.getString(1), init_data.getString(2), init_data.getString(3));
+                count++;
+
+                if(init_data.getString(3).equals("polis"))
+                {
+                    num_polis++;
+                }else{
+                    num_fireman++;
+                }
+
+
+                if (user_team.equals(init_data.getString(3))) {
+                    cur_name[0] = init_data.getString(3);
+                    cur_coreid[0] = count + "";
+                    cur_identity[0] = "Group Call";
+                    call_mode[0] = "1";
+                }
+            }
+            data_list.add(user);
+            lv_identity.setAdapter(new MyListAdapter(this, R.layout.result_after_snapshot_list, data_list));
+        }
+
         //Buttons
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.CAMERA)
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_DENIED)
                 {
                     ActivityCompat.requestPermissions(MainActivity.this,
@@ -114,28 +160,61 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void temp_return_string(String get_name){
+    public void analyser_result(String get_name, String get_identity){
 
-        myDB = new DatabaseHelper(this);
 
-        userList = new ArrayList<>();
         Cursor data = myDB.getListContents();
         int numRows = data.getCount();
+
+        int same_team_count = 0;
+        int diff_team_count = 0;
+        int analyser_count = 1;
+        data_list.clear();
+
+        getView_count = 0;
 
         if(numRows == 0){
             Toast.makeText(MainActivity.this,"The Database is empty  :(.",Toast.LENGTH_LONG).show();
         }else{
             while(data.moveToNext()){
+
                 user = new User(data.getString(1),data.getString(2),data.getString(3));
-                if(get_name.equals(data.getString(1))){
-                    data_list.clear();
-                    cur_name = data.getString(1);
-                    cur_coreid = data.getString(2);
-                    cur_identity = data.getString(3);
+                //if same team
+                if(get_identity.equals(user_team) && get_identity.equals(data.getString(3))){
+                    same_team_count++;
+                    cur_name[0] = data.getString(3);
+                    cur_coreid[0] = same_team_count + "";
+                    cur_identity[0] = "Group Call";
+                    call_mode[0] = "1";
+                    if(same_team_count == num_polis || same_team_count == num_fireman)
+                    {
+                        data_list.add(user);
+                    }
+                }
+
+                //if different team
+                if(!get_identity.equals(user_team)){
+                    diff_team_count++;
+                    analyser_count = 2;
+                    cur_name[1] = "Area Team";
+                    cur_coreid[1] = diff_team_count + "";
+                    cur_identity[1] = "Group Call";
+                    call_mode[1] = "1";
+                    data_list.add(user);
+                    if(diff_team_count == num_polis + num_fireman)
+                    {
+                        data_list.add(user);
+                    }
+                }
+
+                if(get_name.equals(data.getString(1)) && get_identity.equals(data.getString(3))){
+                    cur_name[analyser_count] = data.getString(1);
+                    cur_coreid[analyser_count] = 1 + "";
+                    cur_identity[analyser_count] = data.getString(3);
+                    call_mode[analyser_count] = "0";
                     data_list.add(user);
                 }
             }
-
             lv_identity.setAdapter(new MyListAdapter(this, R.layout.result_after_snapshot_list, data_list));
         }
 
@@ -143,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class MyListAdapter extends ArrayAdapter{
         private int layout;
+        private int count_array;
         public MyListAdapter(Context context,int resource,List objects) {
             super(context, resource, objects);
             layout=resource;
@@ -162,15 +242,16 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.tv_identity = (TextView)convertView.findViewById(tv_identity);
                 viewHolder.btn_view_result = (Button) convertView.findViewById(R.id.btn_view_result);
 
-                viewHolder.tv_result.setText("Name: " + cur_name);
-                viewHolder.tv_coreid.setText("CoreID: " + cur_coreid);
-                viewHolder.tv_identity.setText(cur_identity);
+                viewHolder.tv_result.setText("Name: " + cur_name[position]);
+                viewHolder.tv_coreid.setText("Num_Member: " + cur_coreid[position]);
+                viewHolder.tv_identity.setText("Team: " + cur_identity[position]);
 
+                getView_count++;
                 viewHolder.btn_view_result.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent ptt_interface = new Intent(MainActivity.this,PTT_Call.class);
-                        ptt_interface.putExtra("username",cur_name);
+                        ptt_interface.putExtra("username",cur_name[position]);
                         startActivity(ptt_interface);
                     }
                 });
@@ -210,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                     mat.postRotate(90);
                     mCameraBitmap = Bitmap.createBitmap(mCameraBitmap, 0, 0, mCameraBitmap.getWidth(), mCameraBitmap.getHeight(), mat, true);
                     img_receive_snapshot.setImageBitmap(mCameraBitmap);
-                    temp_return_string("yang");
+                    analyser_result("min kee","fireman");
                     Log.i("test", "onActivityResult OK");
                 }
             }
