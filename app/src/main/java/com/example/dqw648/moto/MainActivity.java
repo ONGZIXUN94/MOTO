@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap mCameraBitmap;
 
     //String
-    String user_acc_name = "seng guan";
+    String user_acc_name = "shu yang";
     String user_team;
 
     //Button
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         int Rows = init_data.getCount();
 
         if(user_acc_name.equals("seng guan") || user_acc_name.equals("shu yang")){
-            user_team = "polis";
+            user_team = "police";
         }else{
             user_team = "fireman";
         }
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 user = new User(init_data.getString(1), init_data.getString(2), init_data.getString(3));
                 count++;
 
-                if(init_data.getString(3).equals("polis"))
+                if(init_data.getString(3).equals("police"))
                 {
                     num_polis++;
                 }else{
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     cur_name[0] = init_data.getString(3);
                     cur_coreid[0] = count + "";
                     cur_identity[0] = "Group Call";
-                    call_mode[0] = "1";
+                    call_mode[0] = "2";
                 }
             }
             data_list.add(user);
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         int diff_team_count = 0;
         int analyser_count = 1;
         data_list.clear();
-
+        lv_identity.setAdapter(new MyListAdapter(this, R.layout.result_after_snapshot_list, data_list));
         getView_count = 0;
 
         if(numRows == 0){
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     cur_name[0] = data.getString(3);
                     cur_coreid[0] = same_team_count + "";
                     cur_identity[0] = "Group Call";
-                    call_mode[0] = "1";
+                    call_mode[0] = "2";
                     if(same_team_count == num_polis || same_team_count == num_fireman)
                     {
                         data_list.add(user);
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     cur_name[1] = "Area Team";
                     cur_coreid[1] = diff_team_count + "";
                     cur_identity[1] = "Group Call";
-                    call_mode[1] = "1";
+                    call_mode[1] = "2";
                     data_list.add(user);
                     if(diff_team_count == num_polis + num_fireman)
                     {
@@ -208,10 +208,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if(get_name.equals(data.getString(1)) && get_identity.equals(data.getString(3))){
-                    cur_name[analyser_count] = data.getString(1);
+                    cur_name[analyser_count] = data.getString(3);
                     cur_coreid[analyser_count] = 1 + "";
-                    cur_identity[analyser_count] = data.getString(3);
-                    call_mode[analyser_count] = "0";
+                    cur_identity[analyser_count] = "Private Call";
+                    call_mode[analyser_count] = "1";
                     data_list.add(user);
                 }
             }
@@ -242,15 +242,16 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.tv_identity = (TextView)convertView.findViewById(tv_identity);
                 viewHolder.btn_view_result = (Button) convertView.findViewById(R.id.btn_view_result);
 
-                viewHolder.tv_result.setText("Name: " + cur_name[position]);
-                viewHolder.tv_coreid.setText("Num_Member: " + cur_coreid[position]);
-                viewHolder.tv_identity.setText("Team: " + cur_identity[position]);
+                viewHolder.tv_result.setText("Team: " + cur_name[position]);
+                viewHolder.tv_coreid.setText("Member: " + cur_coreid[position]);
+                viewHolder.tv_identity.setText("Mode: " + cur_identity[position]);
 
                 getView_count++;
                 viewHolder.btn_view_result.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent ptt_interface = new Intent(MainActivity.this,PTT_Call.class);
+                        ptt_interface.putExtra("mode",call_mode[position]);
                         ptt_interface.putExtra("username",cur_name[position]);
                         startActivity(ptt_interface);
                     }

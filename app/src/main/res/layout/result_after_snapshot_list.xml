@@ -27,8 +27,8 @@
         android:layout_width="125dp"
         android:layout_height="65dp"
         android:text="Polisman"
+        android:gravity="center_vertical"
         android:layout_alignParentTop="true"
-        android:gravity="center"
         android:layout_toRightOf="@+id/tv_coreid" />
 
     <Button
