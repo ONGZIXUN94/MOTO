@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if(get_name.equals(data.getString(1)) && get_identity.equals(data.getString(3))){
-                    cur_name[analyser_count] = data.getString(3);
+                    cur_name[analyser_count] = get_name;
                     cur_coreid[analyser_count] = 1 + "";
                     cur_identity[analyser_count] = "Private Call";
                     call_mode[analyser_count] = "1";
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                     mat.postRotate(90);
                     mCameraBitmap = Bitmap.createBitmap(mCameraBitmap, 0, 0, mCameraBitmap.getWidth(), mCameraBitmap.getHeight(), mat, true);
                     img_receive_snapshot.setImageBitmap(mCameraBitmap);
-                    analyser_result("min kee","fireman");
+                    analyser_result("zi xun","fireman");
                     Log.i("test", "onActivityResult OK");
                 }
             }
