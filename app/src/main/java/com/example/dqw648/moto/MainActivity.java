@@ -28,6 +28,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -80,8 +83,12 @@ public class MainActivity extends AppCompatActivity {
     boolean check = true;
     String ImageName = "image_name" ;
     String ImagePath = "image_path" ;
-    String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
+    //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
+    //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
+    String ServerUploadPath ="http://150.130.67.65:10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://150.130.67.65:10080/first_responder/img_upload_to_server_police.php" ;
+    String finalFireman = "";
+    String finalPoliceman = "";
 
     //variables
     private int count = 0;
@@ -93,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     int getView_count = 0;
     int num_polis = 0;
     int num_fireman = 0;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -365,6 +373,27 @@ public class MainActivity extends AppCompatActivity {
                 // imageView.setImageResource(android.R.color.transparent);
                 //bDone = true;
 
+              //  string1 = "{  \"cached\": true,  \"classification_time\": 0.2783019542694092,  \"classifier_load_time\": 1.2159347534179688e-05,  \"prediction\": \"FiremanCap\",  \"preprocess_time\": 0.008861064910888672,  \"scores\": {    \"FiremanBadge\": 0.004154800903052092,    \"FiremanCap\": 0.8166045546531677,    \"FiremanOthers\": 0.10914599150419235,    \"FiremanUniform\": 0.07009470462799072  }}";
+                Log.i("ImageUpload", "start json=" + string1);
+                //string1 = " {  \"cached\": true,  \"classification_time\": 0.35744714736938477,  \"classifier_load_time\": 2.7179718017578125e-05,  \"prediction\": \"FiremanBadge\",  \"preprocess_time\": 0.011495113372802734,  \"scores\": {    \"FiremanBadge\": 0.9862809181213379,    \"FiremanCap\": 0.003187180031090975,    \"FiremanOthers\": 0.001125816022977233,    \"FiremanUniform\": 0.009406168013811111  }}";
+                JSONObject jsonStr;
+                try {
+                    jsonStr = new JSONObject(string1);
+                    String prediction = jsonStr.getString("prediction");
+                    Log.i("ImageUpload", "start json=" + prediction);
+                    if(prediction.equalsIgnoreCase("FiremanBadge")|| prediction.equalsIgnoreCase("FiremanCap") || prediction.equalsIgnoreCase("FiremanUniform")) {
+                        finalFireman = "Fireman";
+                    }
+                    else{
+                        finalFireman = "Others";
+                    }
+                    Log.i("ImageUpload", "start json=" + finalFireman);
+                    Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -421,11 +450,39 @@ public class MainActivity extends AppCompatActivity {
 
                 // Printing uploading success message coming from server on android app.
                 // Toast.makeText(UploadImage.this,string2,Toast.LENGTH_LONG).show();
-                Log.i("ImageUpload","string2="+string2);
+                Log.i("ImageUpload", "string2=" + string2);
                 // Setting image as transparent after done uploading.
                 // imageView.setImageResource(android.R.color.transparent);
+//                string2 = "{" +
+//                        " \"cached\": false,\n" +
+//                        " \"classification_time\": 0.29324793815612793,\n" +
+//                        " \"classifier_load_time\": 0.5185329914093018,\n" +
+//                        " \"prediction\": \"PolicemanBadge\",\n" +
+//                        " \"preprocess_time\": 0.018055200576782227,\n" +
+//                        " \"scores\": {\n" +
+//                        "   \"PolicemanBadge\": 0.8097599744796753,\n" +
+//                        "   \"PolicemanCap\": 0.1452029049396515,\n" +
+//                        "   \"PolicemanOthers\": 0.03941991925239563,\n" +
+//                        "   \"PolicemanUniform\": 0.005617136601358652\n" +
+//                        " }\n" +
+//                        "}";
 
-
+                Log.i("ImageUpload", "start json=" + string2);
+                JSONObject jsonStr;
+                try {
+                    jsonStr = new JSONObject(string2);
+                    String prediction = jsonStr.getString("prediction");
+                    Log.i("ImageUpload", "start json=" + prediction);
+                    if (prediction.equalsIgnoreCase("PolicemanBadge") || prediction.equalsIgnoreCase("PolicemanCap") || prediction.equalsIgnoreCase("PolicemanUniform")) {
+                        finalPoliceman = "Policeman";
+                    } else {
+                        finalPoliceman = "Others";
+                    }
+                    Log.i("ImageUpload", "start json=" + finalPoliceman);
+                    Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
