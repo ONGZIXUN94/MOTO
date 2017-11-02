@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity {
     String ImagePath = "image_path" ;
     //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
     //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
-    String ServerUploadPath ="http://150.130.67.65:10080/first_responder/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="http://150.130.67.65:10080/first_responder/img_upload_to_server_police.php" ;
-    String finalFireman = "";
-    String finalPoliceman = "";
+    String ServerUploadPath ="http://172.20.10.5:10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://172.20.10.5:10080/first_responder/img_upload_to_server_police.php" ;
+    public String finalFireman = "";
+    public String finalPoliceman = "";
 
     //variables
     private int count = 0;
@@ -312,29 +312,6 @@ public class MainActivity extends AppCompatActivity {
         Intent UploadImage = new Intent(MainActivity.this, UploadImage.class);
         startActivity(UploadImage);
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("test", "onActivityResult");
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (resultCode == RESULT_OK) {
-                if (CameraView.mCameraData != null) {
-                    mCameraBitmap = BitmapFactory.decodeByteArray(CameraView.mCameraData, 0, CameraView.mCameraData.length);
-                    Matrix mat = new Matrix();
-                    mat.postRotate(90);
-                    mCameraBitmap = Bitmap.createBitmap(mCameraBitmap, 0, 0, mCameraBitmap.getWidth(), mCameraBitmap.getHeight(), mat, true);
-                    img_receive_snapshot.setImageBitmap(mCameraBitmap);
-                    analyser_result("zi xun","fireman");
-                    Log.i("test", "onActivityResult OK");
-
-                    ImageUploadToServerFunction();
-                    Log.i("test", "ImageUploadToServerFunction()");
-
-                    Log.i("ImageUpload","call send upload");
-                    ImageUploadToServerFunction2();
-                }
-            }
-        }
-    }
 
     public void ImageUploadToServerFunction(){
 
@@ -359,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute(String string1) {
+            public void onPostExecute(String string1) {
 
                 super.onPostExecute(string1);
 
@@ -382,13 +359,13 @@ public class MainActivity extends AppCompatActivity {
                     String prediction = jsonStr.getString("prediction");
                     Log.i("ImageUpload", "start json=" + prediction);
                     if(prediction.equalsIgnoreCase("FiremanBadge")|| prediction.equalsIgnoreCase("FiremanCap") || prediction.equalsIgnoreCase("FiremanUniform")) {
-                        finalFireman = "Fireman";
+                        finalFireman = "fireman";
                     }
                     else{
                         finalFireman = "Others";
                     }
                     Log.i("ImageUpload", "start json=" + finalFireman);
-                    Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -441,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute(String string2) {
+            public void onPostExecute(String string2) {
 
                 super.onPostExecute(string2);
 
@@ -474,12 +451,12 @@ public class MainActivity extends AppCompatActivity {
                     String prediction = jsonStr.getString("prediction");
                     Log.i("ImageUpload", "start json=" + prediction);
                     if (prediction.equalsIgnoreCase("PolicemanBadge") || prediction.equalsIgnoreCase("PolicemanCap") || prediction.equalsIgnoreCase("PolicemanUniform")) {
-                        finalPoliceman = "Policeman";
+                        finalPoliceman = "police";
                     } else {
                         finalPoliceman = "Others";
                     }
                     Log.i("ImageUpload", "start json=" + finalPoliceman);
-                    Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -505,6 +482,52 @@ public class MainActivity extends AppCompatActivity {
         AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
 
         AsyncTaskUploadClassOBJ.execute();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("test", "onActivityResult");
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if (resultCode == RESULT_OK) {
+                if (CameraView.mCameraData != null) {
+                    mCameraBitmap = BitmapFactory.decodeByteArray(CameraView.mCameraData, 0, CameraView.mCameraData.length);
+                    Matrix mat = new Matrix();
+                    mat.postRotate(90);
+                    mCameraBitmap = Bitmap.createBitmap(mCameraBitmap, 0, 0, mCameraBitmap.getWidth(), mCameraBitmap.getHeight(), mat, true);
+                    img_receive_snapshot.setImageBitmap(mCameraBitmap);
+                    Log.i("test", "onActivityResult OK");
+
+                    ImageUploadToServerFunction();
+                    Log.i("test", "ImageUploadToServerFunction()");
+
+                    Log.i("ImageUpload","call send upload");
+                    ImageUploadToServerFunction2();
+
+                    Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,user_team,Toast.LENGTH_LONG).show();
+
+                    if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
+                        Toast.makeText(MainActivity.this,"This is P2",Toast.LENGTH_LONG).show();
+                    }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
+                        Toast.makeText(MainActivity.this,"This is Others",Toast.LENGTH_LONG).show();
+                    }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
+                        Toast.makeText(MainActivity.this,"This is F1",Toast.LENGTH_LONG).show();
+                    }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
+                        Toast.makeText(MainActivity.this,"This is F2",Toast.LENGTH_LONG).show();
+                    }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
+                        Toast.makeText(MainActivity.this,"This is P1",Toast.LENGTH_LONG).show();
+                    }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
+                        Toast.makeText(MainActivity.this,"This is Others",Toast.LENGTH_LONG).show();
+                    }
+
+
+
+                    analyser_result("zi xun","fireman");
+
+                }
+            }
+        }
     }
 
     public class ImageProcessClass{
