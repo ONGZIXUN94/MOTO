@@ -1,6 +1,7 @@
 package com.example.dqw648.moto;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     public static Camera mCamera;
     private static final String TAG = "mainApp";
     private Bitmap mCameraBitmap;
+    public   ProgressDialog progressBar;
+    public int progressBarStatus = 0;
 
     //String
     String user_acc_name = "Shu Yang";
@@ -159,6 +162,14 @@ public class MainActivity extends AppCompatActivity {
         btn_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                progressBar = new ProgressDialog(view.getContext());
+                progressBar.setCancelable(true);
+                progressBar.setMessage("Analysing ...");
+                progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressBar.setProgress(0);
+                progressBar.setMax(100);
+
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_DENIED)
                 {
@@ -512,6 +523,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
+                    progressBar.show();
+
                 }
             }
         }
@@ -521,7 +534,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(Police == true && Fireman == true)
         {
-
+            progressBar.setProgress(100);
+            progressBar.dismiss();
             if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //p2
                 analyser_result("Shu Yang","fireman");
