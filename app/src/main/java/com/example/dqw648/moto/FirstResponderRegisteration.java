@@ -62,4 +62,7 @@ public class FirstResponderRegisteration extends AppCompatActivity {
             Toast.makeText(FirstResponderRegisteration.this,"Something went wrong :(.",Toast.LENGTH_LONG).show();
         }
     }
+
+    public void CLEANALL(View view){
+    }
 }
