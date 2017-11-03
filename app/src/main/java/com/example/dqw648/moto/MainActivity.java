@@ -1,5 +1,6 @@
 package com.example.dqw648.moto;
 
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.zello.sdk.Zello;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ZelloWrapper.init(this);
         //Button
         btn_camera = (ImageButton) findViewById(R.id.btn_camera);
 
@@ -112,6 +117,43 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(MainActivity.this, CameraView.class), REQUEST_IMAGE_CAPTURE);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ZelloWrapper.setStatusText(""); // Clear status message
+        new ScanStatusTask().execute("");
+    }
+
+    class ScanStatusTask extends AsyncTask<String, Integer, Long> {
+        protected Long doInBackground(String... strings) {
+            while (ZelloWrapper.checkTrigerToJoinGroup()!=true){
+            }
+
+            return 0L;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            // setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(Long result) {
+            // Log.d("app", "done");
+            connectToFirstResponderGroup();
+        }
+
+        private void connectToFirstResponderGroup(){
+            Log.d("app", "TODO: connect to first responderGroup");
+            Log.d("app", "TODO: add to list view");
+            Toast.makeText(MainActivity.this, "Connect to Dynamic Group", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Zello.getInstance().unconfigure();
     }
 
     public void temp_return_string(String get_name){
@@ -212,9 +254,12 @@ public class MainActivity extends AppCompatActivity {
                     img_receive_snapshot.setImageBitmap(mCameraBitmap);
                     temp_return_string("yang");
                     Log.i("test", "onActivityResult OK");
+                    ZelloWrapper.setStatusText("JoinThisF-ingGroup");
                 }
             }
         }
     }
+
+
 
 }
