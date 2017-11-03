@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap mCameraBitmap;
 
     //String
-    String user_acc_name = "shu yang";
+    String user_acc_name = "Shu Yang";
     String user_team;
 
     //Button
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     String ServerUploadPath2 ="http://172.20.10.5:10080/first_responder/img_upload_to_server_police.php" ;
     public String finalFireman = "";
     public String finalPoliceman = "";
+    Boolean Fireman, Police;
 
     //variables
     private int count = 0;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         //Initialization
         int Rows = init_data.getCount();
 
-        if(user_acc_name.equals("seng guan") || user_acc_name.equals("shu yang")){
+        if(user_acc_name.equals("Seng Guan") || user_acc_name.equals("Shu Yang")){
             user_team = "police";
         }else{
             user_team = "fireman";
@@ -144,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                 if (user_team.equals(init_data.getString(3))) {
-                    cur_name[0] = init_data.getString(3);
-                    cur_coreid[0] = count + "";
-                    cur_identity[0] = "Group Call";
+                    cur_name[0] = "Team: " + init_data.getString(3);
+                    cur_coreid[0] = "Num_member: " + count;
+                    cur_identity[0] = "Mode: Group Call";
                     call_mode[0] = "2";
                 }
             }
@@ -213,9 +214,9 @@ public class MainActivity extends AppCompatActivity {
                 //if same team
                 if(get_identity.equals(user_team) && get_identity.equals(data.getString(3))){
                     same_team_count++;
-                    cur_name[0] = data.getString(3);
-                    cur_coreid[0] = same_team_count + "";
-                    cur_identity[0] = "Group Call";
+                    cur_name[0] = "Team: " + data.getString(3);
+                    cur_coreid[0] = "Num_members: " + same_team_count;
+                    cur_identity[0] = "Mode: Group Call";
                     call_mode[0] = "2";
                     if(same_team_count == num_polis || same_team_count == num_fireman)
                     {
@@ -227,9 +228,9 @@ public class MainActivity extends AppCompatActivity {
                 if(!get_identity.equals(user_team)){
                     diff_team_count++;
                     analyser_count = 2;
-                    cur_name[1] = "Area Team";
-                    cur_coreid[1] = diff_team_count + "";
-                    cur_identity[1] = "Group Call";
+                    cur_name[1] = "Team: Area Team";
+                    cur_coreid[1] = "Num_members: " + diff_team_count;
+                    cur_identity[1] = "Mode: Group Call";
                     call_mode[1] = "2";
                     data_list.add(user);
                     if(diff_team_count == num_polis + num_fireman)
@@ -239,9 +240,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if(get_name.equals(data.getString(1)) && get_identity.equals(data.getString(3))){
-                    cur_name[analyser_count] = get_name;
-                    cur_coreid[analyser_count] = 1 + "";
-                    cur_identity[analyser_count] = "Private Call";
+                    cur_name[analyser_count] = "Name: " + get_name;
+                    cur_coreid[analyser_count] = "CoreID: " + data.getString(2);
+                    cur_identity[analyser_count] = "Team: " + get_identity;
                     call_mode[analyser_count] = "1";
                     data_list.add(user);
                 }
@@ -273,9 +274,9 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.tv_identity = (TextView)convertView.findViewById(tv_identity);
                 viewHolder.btn_view_result = (Button) convertView.findViewById(R.id.btn_view_result);
 
-                viewHolder.tv_result.setText("Team: " + cur_name[position]);
-                viewHolder.tv_coreid.setText("Member: " + cur_coreid[position]);
-                viewHolder.tv_identity.setText("Mode: " + cur_identity[position]);
+                viewHolder.tv_result.setText(cur_name[position]);
+                viewHolder.tv_coreid.setText(cur_coreid[position]);
+                viewHolder.tv_identity.setText(cur_identity[position]);
 
                 getView_count++;
                 viewHolder.btn_view_result.setOnClickListener(new View.OnClickListener() {
@@ -364,6 +365,9 @@ public class MainActivity extends AppCompatActivity {
                     else{
                         finalFireman = "Others";
                     }
+                    Fireman = true;
+
+                    FinalResult();
                     Log.i("ImageUpload", "start json=" + finalFireman);
                     //Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
 
@@ -455,6 +459,8 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         finalPoliceman = "Others";
                     }
+                    Police = true;
+                    FinalResult();
                     Log.i("ImageUpload", "start json=" + finalPoliceman);
                     //Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
@@ -497,37 +503,46 @@ public class MainActivity extends AppCompatActivity {
                     img_receive_snapshot.setImageBitmap(mCameraBitmap);
                     Log.i("test", "onActivityResult OK");
 
+                    Police = false;
+                    Fireman = false;
+
                     ImageUploadToServerFunction();
                     Log.i("test", "ImageUploadToServerFunction()");
 
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
-                    Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
-                    Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
-                    Toast.makeText(MainActivity.this,user_team,Toast.LENGTH_LONG).show();
-
-                    if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
-                        Toast.makeText(MainActivity.this,"This is P2",Toast.LENGTH_LONG).show();
-                    }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
-                        Toast.makeText(MainActivity.this,"This is Others",Toast.LENGTH_LONG).show();
-                    }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
-                        Toast.makeText(MainActivity.this,"This is F1",Toast.LENGTH_LONG).show();
-                    }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
-                        Toast.makeText(MainActivity.this,"This is F2",Toast.LENGTH_LONG).show();
-                    }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
-                        Toast.makeText(MainActivity.this,"This is P1",Toast.LENGTH_LONG).show();
-                    }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
-                        Toast.makeText(MainActivity.this,"This is Others",Toast.LENGTH_LONG).show();
-                    }
-
-
-
-                    analyser_result("zi xun","fireman");
-
                 }
             }
         }
+    }
+
+    public void FinalResult(){
+
+        if(Police == true && Fireman == true)
+        {
+
+            if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
+                //p2
+                analyser_result("Shu Yang","fireman");
+            }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
+                //other
+                Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
+            }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
+                //F1
+                analyser_result("Min Kee","fireman");
+            }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
+                //F2
+                analyser_result("Zi Xun","fireman");
+            }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
+                //P1
+                analyser_result("Seng Guan","police");
+            }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
+                //Other
+                Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     public class ImageProcessClass{
