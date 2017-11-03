@@ -562,8 +562,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
-                    progressBar.show();
                     ZelloWrapper.setStatusText("JoinThisF-ingGroup");
+
+                    progressBar.show();
+
 
                 }
             }
