@@ -10,6 +10,8 @@
         android:layout_width="110dp"
         android:layout_height="65dp"
         android:text="Name: Min Kee"
+        android:textStyle="italic"
+        android:textColor="@color/colorwhite"
         android:gravity="center_vertical"
         android:layout_alignBottom="@+id/tv_coreid" />
 
@@ -18,6 +20,8 @@
         android:layout_width="115dp"
         android:layout_height="65dp"
         android:text="ID:ABC123"
+        android:textStyle="italic"
+        android:textColor="@color/colorwhite"
         android:layout_alignParentTop="true"
         android:gravity="center_vertical"
         android:layout_toRightOf="@+id/tv_result" />
@@ -27,6 +31,8 @@
         android:layout_width="125dp"
         android:layout_height="65dp"
         android:text="Polisman"
+        android:textStyle="italic"
+        android:textColor="@color/colorwhite"
         android:gravity="center_vertical"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/tv_coreid" />
