@@ -4,6 +4,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.zello.sdk.AppState;
+import com.zello.sdk.Contact;
+import com.zello.sdk.ContactStatus;
+import com.zello.sdk.ContactType;
+import com.zello.sdk.Contacts;
+import com.zello.sdk.Status;
 import com.zello.sdk.Zello;
 import com.zello.sdk.Tab;
 import com.zello.sdk.Theme;
@@ -79,6 +84,42 @@ public class ZelloWrapper {
     private static void selectContact(){
         Zello.getInstance().selectContact("Select a contact", new Tab[]{Tab.RECENTS,
                 Tab.USERS, Tab.CHANNELS}, Tab.RECENTS, Theme.DARK);
+    }
+
+    private static Contacts myContacts = null;
+
+    public static boolean checkTrigerToJoinGroup(){
+        if (myContacts == null){
+            // refresh contacts once
+            myContacts = Zello.getInstance().getContacts();
+        }
+
+        for (int i = 0; i < myContacts.getCount(); i++){
+            Contact curContact = myContacts.getItem(i);
+            ContactType contactType = curContact.getType();
+
+            if (contactType == ContactType.USER){
+                // String name = curContact.getDisplayName();
+                String statusMessage = curContact.getStatusMessage();
+                // Log.d(tag, String.format("%d %s %s \r\n", i, name, statusMessage));
+                if(statusMessage != null && statusMessage.contains("JoinThisF-ingGroup")){
+                    return true;
+                }
+            }
+            else{
+                // do nothing
+            }
+        }
+        // Log.d(tag, "get contacts done");
+        return false;
+    }
+
+    public static void setStatusText(String text){
+        Zello.getInstance().setStatusMessage(text);
+    }
+
+    public static void setStatus(Status stat){
+        Zello.getInstance().setStatus(stat);
     }
 
 }

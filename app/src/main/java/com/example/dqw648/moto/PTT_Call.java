@@ -32,7 +32,7 @@ public class PTT_Call extends AppCompatActivity {
 
         TextView tv_callname = (TextView) findViewById(R.id.tv_callname);
         TextView tv_callmode = (TextView) findViewById(R.id.tv_callmode);
-        ZelloWrapper.init(this);
+        // ZelloWrapper.init(this);
         String dummy = ZelloWrapper.getThisUserName();
 
         Bundle from_listview = getIntent().getExtras();

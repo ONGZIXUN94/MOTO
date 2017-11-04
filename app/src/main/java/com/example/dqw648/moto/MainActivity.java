@@ -1,5 +1,6 @@
 package com.example.dqw648.moto;
 
+
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -29,9 +30,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zello.sdk.Zello;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ZelloWrapper.init(this);
         //Button
         btn_camera = (ImageButton) findViewById(R.id.btn_camera);
 
@@ -201,6 +203,43 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(MainActivity.this, CameraView.class), REQUEST_IMAGE_CAPTURE);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ZelloWrapper.setStatusText(""); // Clear status message
+        new ScanStatusTask().execute("");
+    }
+
+    class ScanStatusTask extends AsyncTask<String, Integer, Long> {
+        protected Long doInBackground(String... strings) {
+            while (ZelloWrapper.checkTrigerToJoinGroup()!=true){
+            }
+
+            return 0L;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            // setProgressPercent(progress[0]);
+        }
+
+        protected void onPostExecute(Long result) {
+            // Log.d("app", "done");
+            connectToFirstResponderGroup();
+        }
+
+        private void connectToFirstResponderGroup(){
+            Log.d("app", "TODO: connect to first responderGroup");
+            Log.d("app", "TODO: add to list view");
+            Toast.makeText(MainActivity.this, "Connect to Dynamic Group", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Zello.getInstance().unconfigure();
     }
 
     public void analyser_result(String get_name, String get_identity){
@@ -523,7 +562,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
+                    ZelloWrapper.setStatusText("JoinThisF-ingGroup");
+
                     progressBar.show();
+
 
                 }
             }
