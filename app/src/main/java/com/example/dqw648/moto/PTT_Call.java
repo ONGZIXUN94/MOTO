@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,8 @@ public class PTT_Call extends AppCompatActivity {
     String detected_username;
     String detected_callmode;
     int call_mode;
+
+    RelativeLayout layout;
 
     /*
     * NOTE: You need to have zello work app (not the one from appstore) installed using this link
@@ -38,6 +41,8 @@ public class PTT_Call extends AppCompatActivity {
         Bundle from_listview = getIntent().getExtras();
         detected_username = from_listview.getString("username");
         detected_callmode = from_listview.getString("mode");
+
+        layout = (RelativeLayout)findViewById(R.id.ptt_background);
 
         if(detected_username.equals("Area Team")){
             detected_username = "ONEMERIDIAN";
@@ -75,10 +80,12 @@ public class PTT_Call extends AppCompatActivity {
 
                 int action = motionEvent.getAction();
                 if (action == MotionEvent. ACTION_DOWN ) {
+                    layout.setBackgroundResource(R.drawable.ptt_button2);
                     Toast toast = Toast.makeText(getApplicationContext(), "Transmitting...", Toast.LENGTH_SHORT);
                     toast.show();
                     ZelloWrapper.pttStart();
                 } else if (action == MotionEvent. ACTION_UP || action == MotionEvent. ACTION_CANCEL ) {
+                    layout.setBackgroundResource(R.drawable.ptt_button1);
                     ZelloWrapper.pttStop();
                     Toast toast = Toast.makeText(getApplicationContext(), "Voice message sent.", Toast.LENGTH_SHORT);
                     toast.show();
