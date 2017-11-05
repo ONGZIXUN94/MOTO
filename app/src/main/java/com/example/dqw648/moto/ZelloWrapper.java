@@ -5,13 +5,12 @@ import android.util.Log;
 
 import com.zello.sdk.AppState;
 import com.zello.sdk.Contact;
-import com.zello.sdk.ContactStatus;
 import com.zello.sdk.ContactType;
 import com.zello.sdk.Contacts;
 import com.zello.sdk.Status;
-import com.zello.sdk.Zello;
 import com.zello.sdk.Tab;
 import com.zello.sdk.Theme;
+import com.zello.sdk.Zello;
 /**
  * Created by PMXT36 on 10/27/2017.
  */
@@ -88,7 +87,7 @@ public class ZelloWrapper {
 
     private static Contacts myContacts = null;
 
-    public static boolean checkTrigerToJoinGroup(){
+    public static boolean checkTrigerToJoinGroup(String statusMsg){
         if (myContacts == null){
             // refresh contacts once
             myContacts = Zello.getInstance().getContacts();
@@ -102,7 +101,7 @@ public class ZelloWrapper {
                 // String name = curContact.getDisplayName();
                 String statusMessage = curContact.getStatusMessage();
                 // Log.d(tag, String.format("%d %s %s \r\n", i, name, statusMessage));
-                if(statusMessage != null && statusMessage.contains("JoinThisF-ingGroup")){
+                if(statusMessage != null && statusMessage.contains(statusMsg)){
                     return true;
                 }
             }

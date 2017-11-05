@@ -57,6 +57,9 @@ import static com.example.dqw648.moto.R.id.tv_result;
 
 public class MainActivity extends AppCompatActivity {
 
+    final String DynamicGroupName = "JoinThisF-ingGroup";
+    private AsyncTask<String, Integer, Long> scanTask;
+
     public static Camera mCamera;
     private static final String TAG = "mainApp";
     private Bitmap mCameraBitmap;
@@ -209,12 +212,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         ZelloWrapper.setStatusText(""); // Clear status message
-        new ScanStatusTask().execute("");
+        scanTask = new ScanStatusTask().execute("");
     }
 
     class ScanStatusTask extends AsyncTask<String, Integer, Long> {
         protected Long doInBackground(String... strings) {
-            while (ZelloWrapper.checkTrigerToJoinGroup()!=true){
+            while (ZelloWrapper.checkTrigerToJoinGroup(DynamicGroupName)!=true
+                    && !isCancelled()){
             }
 
             return 0L;
@@ -562,8 +566,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
-                    ZelloWrapper.setStatusText("JoinThisF-ingGroup");
-
+                    ZelloWrapper.setStatusText(DynamicGroupName);
+                    scanTask.cancel(true);
                     progressBar.show();
 
 
