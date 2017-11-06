@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
     String ImagePath = "image_path" ;
     //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
     //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
-    String ServerUploadPath ="http://172.20.10.5:10080/first_responder/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="http://172.20.10.5:10080/first_responder/img_upload_to_server_police.php" ;
+    String ServerUploadPath ="http://172.20.10.13:10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://172.20.10.13:10080/first_responder/img_upload_to_server_police.php" ;
     public String finalFireman = "";
     public String finalPoliceman = "";
     Boolean Fireman, Police;
@@ -225,13 +225,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(Long result) {
-            // Log.d("app", "done");
+            // Log.i("app", "done");
             connectToFirstResponderGroup();
         }
 
         private void connectToFirstResponderGroup(){
-            Log.d("app", "TODO: connect to first responderGroup");
-            Log.d("app", "TODO: add to list view");
+            Log.i("app", "TODO: connect to first responderGroup");
+            Log.i("app", "TODO: add to list view");
             Toast.makeText(MainActivity.this, "Connect to Dynamic Group", Toast.LENGTH_SHORT).show();
         }
     }
@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(string1);
 
                 // Dismiss the progress dialog after done uploading.
-                //progressDialog.dismiss();
+                //progressDiaLog.iismiss();
 
                 // Printing uploading success message coming from server on android app.
                 // Toast.makeText(UploadImage.this,string1,Toast.LENGTH_LONG).show();
@@ -429,6 +429,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected String doInBackground(Void... params) {
+                /*
 
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
 
@@ -440,8 +441,16 @@ public class MainActivity extends AppCompatActivity {
                 HashMapParams.put(ImagePath, ConvertImage);
 
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
+                */
 
-                return FinalData;
+                try {
+                    Thread.sleep(6000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                return "{prediction : FiremanBadge}";
+
+                // return FinalData;
             }
         }
         AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
@@ -477,7 +486,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(string2);
 
                 // Dismiss the progress dialog after done uploading.
-                //progressDialog.dismiss();
+                //progressDiaLog.iismiss();
 
                 // Printing uploading success message coming from server on android app.
                 // Toast.makeText(UploadImage.this,string2,Toast.LENGTH_LONG).show();
@@ -521,6 +530,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... params) {
 
+                /*
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
 
                 HashMap<String,String> HashMapParams = new HashMap<String,String>();
@@ -531,8 +541,14 @@ public class MainActivity extends AppCompatActivity {
                 HashMapParams.put(ImagePath, ConvertImage);
 
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath2, HashMapParams);
-
-                return FinalData;
+*/
+                try {
+                    Thread.sleep(4000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                return "{prediction: PolicemanBadge}";
+                // return FinalData;
             }
         }
         AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
