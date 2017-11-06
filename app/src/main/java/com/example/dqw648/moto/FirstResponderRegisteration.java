@@ -1,6 +1,7 @@
 package com.example.dqw648.moto;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,6 +26,31 @@ public class FirstResponderRegisteration extends AppCompatActivity {
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnView = (Button) findViewById(R.id.btnView);
         myDB = new DatabaseHelper(this);
+
+        Cursor init_data = myDB.getListContents();
+        int row = init_data.getCount();
+
+        if(row == 0){
+            for(int i=0; i<4; i++){
+                switch (i){
+                    case 0:
+                        AddData("Min Kee","abc123", "fireman");
+                        break;
+                    case 1:
+                        AddData("Shu Yang","abc234", "police");
+                        break;
+                    case 2:
+                        AddData("Seng Guan", "abc345", "police");
+                        break;
+                    case 3:
+                        AddData("Zi Xun", "abc456", "fireman");
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        }
 
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override

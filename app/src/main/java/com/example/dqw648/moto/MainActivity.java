@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
     String ImagePath = "image_path" ;
     //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
     //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
-    String ServerUploadPath ="http://172.20.10.13:10080/first_responder/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="http://172.20.10.13:10080/first_responder/img_upload_to_server_police.php" ;
+    String ServerUploadPath ="http://172.20.10.5:10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://172.20.10.5:10080/first_responder/img_upload_to_server_police.php" ;
     public String finalFireman = "";
     public String finalPoliceman = "";
     Boolean Fireman, Police;

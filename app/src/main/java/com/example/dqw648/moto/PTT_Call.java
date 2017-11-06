@@ -50,10 +50,6 @@ public class PTT_Call extends AppCompatActivity {
             detected_username = "PoliceTeam";
         }else if(detected_username.equals("fireman")){
             detected_username = "FiremanTeam";
-        }else if(detected_username.equals("zi xun")){
-            detected_username = "zixun";
-        }else{
-            //do somthing
         }
 
         try{
