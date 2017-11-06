@@ -58,7 +58,8 @@ import static com.example.dqw648.moto.ZelloWrapper.getThisUserName;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String JoinDynamicGroupTrigger = "JoinThisF-ingGroup";
+    // final String JoinDynamicGroupTrigger = "JoinThisF-ingGroup";
+    final String JoinDynamicGroupTrigger = "7Jim2GLub3";
     private AsyncTask<String, Integer, Long> scanTask;
 
     public static Camera mCamera;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("state", "onCreate");
+        Log.i("state", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -226,17 +227,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("state", "onStart");
+        Log.i("state", "onStart");
         ZelloWrapper.setStatusText(""); // Clear status message
         if (scanTask == null){
-            Log.d("app", "execute scan task");
+            Log.i("app", "execute scan task");
             scanTask = new ScanStatusTask().execute("");
         }
     }
 
     @Override
     protected void onStop() {
-        Log.d("state", "onStop");
+        Log.i("state", "onStop");
         super.onStop();
     }
 
@@ -244,13 +245,12 @@ public class MainActivity extends AppCompatActivity {
         protected Long doInBackground(String... strings) {
 
             // Set once
-            Thread.currentThread().setName("Scan Status AsyncTask...");
+            // Thread.currentThread().setName("Scan Status AsyncTask...");
 
-            while (ZelloWrapper.checkTriggerToJoinGroup(JoinDynamicGroupTrigger)!=true
-                    && !isCancelled()){
+            while (ZelloWrapper.checkTriggerToJoinGroup(JoinDynamicGroupTrigger)!=true){
             }
 
-            Log.d("app", "exiting background task");
+            Log.i("app", "exiting background task");
             return 0L;
         }
 
@@ -260,20 +260,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
-            Log.d("app", "scan task is cancelled");
+            Log.i("app", "scan task is cancelled");
             connectToFirstResponderGroup();
             super.onCancelled();
         }
 
         protected void onPostExecute(Long result) {
-
             Log.i("app", "post execute async");
             connectToFirstResponderGroup();
         }
 
-        private void connectToFirstResponderGroup(){
+        public void connectToFirstResponderGroup(){
             Log.i("app", "TODO: connect to first responderGroup");
             Log.i("app", "TODO: add to list view");
+            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
             Toast.makeText(MainActivity.this, "Connect to Dynamic Group", Toast.LENGTH_SHORT).show();
         }
     }
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         ZelloWrapper.setStatusText(""); // clear status
         Zello.getInstance().unconfigure();
-        Log.d("state", "onDestroy");
+        Log.i("state", "onDestroy");
         super.onDestroy();
     }
 
@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onResume() {
-        Log.d("state", "onResume");
+        Log.i("state", "onResume");
         super.onResume();
     }
 
@@ -423,71 +423,59 @@ public class MainActivity extends AppCompatActivity {
         startActivity(UploadImage);
     }
 
-    public void ImageUploadToServerFunction(){
+    class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
 
-        ByteArrayOutputStream byteArrayOutputStreamObject ;
+        @Override
+        protected void onPreExecute() {
 
-        byteArrayOutputStreamObject = new ByteArrayOutputStream();
+            super.onPreExecute();
 
-        mCameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStreamObject);
+            // progressDialog = ProgressDialog.show(UploadImage,"Image is Uploading","Please Wait",false,false);
+        }
 
-        byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
+        @Override
+        public void onPostExecute(String string1) {
 
-        final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
+            super.onPostExecute(string1);
 
-        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
+            // Dismiss the progress dialog after done uploading.
+            //progressDiaLog.iismiss();
 
-            @Override
-            protected void onPreExecute() {
+            // Printing uploading success message coming from server on android app.
+            // Toast.makeText(UploadImage.this,string1,Toast.LENGTH_LONG).show();
+            Log.i("ImageUpload","string1="+string1);
+            // Setting image as transparent after done uploading.
+            // imageView.setImageResource(android.R.color.transparent);
+            //bDone = true;
 
-                super.onPreExecute();
-
-                // progressDialog = ProgressDialog.show(UploadImage,"Image is Uploading","Please Wait",false,false);
-            }
-
-            @Override
-            public void onPostExecute(String string1) {
-
-                super.onPostExecute(string1);
-
-                // Dismiss the progress dialog after done uploading.
-                //progressDiaLog.iismiss();
-
-                // Printing uploading success message coming from server on android app.
-                // Toast.makeText(UploadImage.this,string1,Toast.LENGTH_LONG).show();
-                Log.i("ImageUpload","string1="+string1);
-                // Setting image as transparent after done uploading.
-                // imageView.setImageResource(android.R.color.transparent);
-                //bDone = true;
-
-              //  string1 = "{  \"cached\": true,  \"classification_time\": 0.2783019542694092,  \"classifier_load_time\": 1.2159347534179688e-05,  \"prediction\": \"FiremanCap\",  \"preprocess_time\": 0.008861064910888672,  \"scores\": {    \"FiremanBadge\": 0.004154800903052092,    \"FiremanCap\": 0.8166045546531677,    \"FiremanOthers\": 0.10914599150419235,    \"FiremanUniform\": 0.07009470462799072  }}";
-                Log.i("ImageUpload", "start json=" + string1);
-                //string1 = " {  \"cached\": true,  \"classification_time\": 0.35744714736938477,  \"classifier_load_time\": 2.7179718017578125e-05,  \"prediction\": \"FiremanBadge\",  \"preprocess_time\": 0.011495113372802734,  \"scores\": {    \"FiremanBadge\": 0.9862809181213379,    \"FiremanCap\": 0.003187180031090975,    \"FiremanOthers\": 0.001125816022977233,    \"FiremanUniform\": 0.009406168013811111  }}";
-                JSONObject jsonStr;
-                try {
-                    jsonStr = new JSONObject(string1);
-                    String prediction = jsonStr.getString("prediction");
-                    Log.i("ImageUpload", "start json=" + prediction);
-                    if(prediction.equalsIgnoreCase("FiremanBadge")|| prediction.equalsIgnoreCase("FiremanCap") || prediction.equalsIgnoreCase("FiremanUniform")) {
-                        finalFireman = "fireman";
-                    }
-                    else{
-                        finalFireman = "Others";
-                    }
-                    Fireman = true;
-
-                    FinalResult();
-                    Log.i("ImageUpload", "start json=" + finalFireman);
-                    //Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            //  string1 = "{  \"cached\": true,  \"classification_time\": 0.2783019542694092,  \"classifier_load_time\": 1.2159347534179688e-05,  \"prediction\": \"FiremanCap\",  \"preprocess_time\": 0.008861064910888672,  \"scores\": {    \"FiremanBadge\": 0.004154800903052092,    \"FiremanCap\": 0.8166045546531677,    \"FiremanOthers\": 0.10914599150419235,    \"FiremanUniform\": 0.07009470462799072  }}";
+            Log.i("ImageUpload", "start json=" + string1);
+            //string1 = " {  \"cached\": true,  \"classification_time\": 0.35744714736938477,  \"classifier_load_time\": 2.7179718017578125e-05,  \"prediction\": \"FiremanBadge\",  \"preprocess_time\": 0.011495113372802734,  \"scores\": {    \"FiremanBadge\": 0.9862809181213379,    \"FiremanCap\": 0.003187180031090975,    \"FiremanOthers\": 0.001125816022977233,    \"FiremanUniform\": 0.009406168013811111  }}";
+            JSONObject jsonStr;
+            try {
+                jsonStr = new JSONObject(string1);
+                String prediction = jsonStr.getString("prediction");
+                Log.i("ImageUpload", "start json=" + prediction);
+                if(prediction.equalsIgnoreCase("FiremanBadge")|| prediction.equalsIgnoreCase("FiremanCap") || prediction.equalsIgnoreCase("FiremanUniform")) {
+                    finalFireman = "fireman";
                 }
+                else{
+                    finalFireman = "Others";
+                }
+                Fireman = true;
 
+                FinalResult();
+                Log.i("ImageUpload", "start json=" + finalFireman);
+                //Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            protected String doInBackground(Void... params) {
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
                 /*
 
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
@@ -502,23 +490,18 @@ public class MainActivity extends AppCompatActivity {
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
                 */
 
-                try {
-                    Thread.sleep(6000);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-                return "{prediction : FiremanBadge}";
-
-                // return FinalData;
+            try {
+                Thread.sleep(1500);
+            }catch (InterruptedException e){
+                e.printStackTrace();
             }
+            return "{prediction : FiremanBadge}";
+
+            // return FinalData;
         }
-
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-        AsyncTaskUploadClassOBJ.execute();
-
     }
 
-    public void ImageUploadToServerFunction2(){
+    public void ImageUploadToServerFunction(){
 
         ByteArrayOutputStream byteArrayOutputStreamObject ;
 
@@ -530,29 +513,36 @@ public class MainActivity extends AppCompatActivity {
 
         final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
 
-        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
+        /*
+        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+        AsyncTaskUploadClassOBJ.execute();
+        */
+        new AsyncTaskUploadClass().execute();
+    }
 
-            @Override
-            protected void onPreExecute() {
+    class AsyncTaskUploadClass2 extends AsyncTask<Void,Void,String> {
 
-                super.onPreExecute();
+        @Override
+        protected void onPreExecute() {
 
-                // progressDialog = ProgressDialog.show(UploadImage,"Image is Uploading","Please Wait",false,false);
-            }
+            super.onPreExecute();
 
-            @Override
-            public void onPostExecute(String string2) {
+            // progressDialog = ProgressDialog.show(UploadImage,"Image is Uploading","Please Wait",false,false);
+        }
 
-                super.onPostExecute(string2);
+        @Override
+        public void onPostExecute(String string2) {
 
-                // Dismiss the progress dialog after done uploading.
-                //progressDiaLog.iismiss();
+            super.onPostExecute(string2);
 
-                // Printing uploading success message coming from server on android app.
-                // Toast.makeText(UploadImage.this,string2,Toast.LENGTH_LONG).show();
-                Log.i("ImageUpload", "string2=" + string2);
-                // Setting image as transparent after done uploading.
-                // imageView.setImageResource(android.R.color.transparent);
+            // Dismiss the progress dialog after done uploading.
+            //progressDiaLog.iismiss();
+
+            // Printing uploading success message coming from server on android app.
+            // Toast.makeText(UploadImage.this,string2,Toast.LENGTH_LONG).show();
+            Log.i("ImageUpload", "string2=" + string2);
+            // Setting image as transparent after done uploading.
+            // imageView.setImageResource(android.R.color.transparent);
 //                string2 = "{" +
 //                        " \"cached\": false,\n" +
 //                        " \"classification_time\": 0.29324793815612793,\n" +
@@ -567,29 +557,29 @@ public class MainActivity extends AppCompatActivity {
 //                        " }\n" +
 //                        "}";
 
-                Log.i("ImageUpload", "start json=" + string2);
-                JSONObject jsonStr;
-                try {
-                    jsonStr = new JSONObject(string2);
-                    String prediction = jsonStr.getString("prediction");
-                    Log.i("ImageUpload", "start json=" + prediction);
-                    if (prediction.equalsIgnoreCase("PolicemanBadge") || prediction.equalsIgnoreCase("PolicemanCap") || prediction.equalsIgnoreCase("PolicemanUniform")) {
-                        finalPoliceman = "police";
-                    }
-                    else {
-                        finalPoliceman = "Others";
-                    }
-                    Police = true;
-                    FinalResult();
-                    Log.i("ImageUpload", "start json=" + finalPoliceman);
-                    //Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            Log.i("ImageUpload", "start json=" + string2);
+            JSONObject jsonStr;
+            try {
+                jsonStr = new JSONObject(string2);
+                String prediction = jsonStr.getString("prediction");
+                Log.i("ImageUpload", "start json=" + prediction);
+                if (prediction.equalsIgnoreCase("PolicemanBadge") || prediction.equalsIgnoreCase("PolicemanCap") || prediction.equalsIgnoreCase("PolicemanUniform")) {
+                    finalPoliceman = "police";
                 }
+                else {
+                    finalPoliceman = "Others";
+                }
+                Police = true;
+                FinalResult();
+                Log.i("ImageUpload", "start json=" + finalPoliceman);
+                //Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+        }
 
-            @Override
-            protected String doInBackground(Void... params) {
+        @Override
+        protected String doInBackground(Void... params) {
 
                 /*
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
@@ -603,17 +593,33 @@ public class MainActivity extends AppCompatActivity {
 
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath2, HashMapParams);
 */
-                try {
-                    Thread.sleep(4000);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-                return "{prediction: others}";
-                // return FinalData;
+            try {
+                Thread.sleep(1000);
+            }catch (InterruptedException e){
+                e.printStackTrace();
             }
+            return "{prediction: others}";
+            // return FinalData;
         }
+    }
+
+    public void ImageUploadToServerFunction2(){
+
+        ByteArrayOutputStream byteArrayOutputStreamObject ;
+
+        byteArrayOutputStreamObject = new ByteArrayOutputStream();
+
+        mCameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStreamObject);
+
+        byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
+
+        final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
+
+        /*
         AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
         AsyncTaskUploadClassOBJ.execute();
+        */
+        new AsyncTaskUploadClass2().execute();
 
     }
 
@@ -646,24 +652,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void signalJoinDynamic(){
+        ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+        scanTask.cancel(true);
+        Log.i("app", "cancel scan task");
+    }
+
+
     public void FinalResult(){
 
         if(Police == true && Fireman == true)
         {
-            // test code
-            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
-            scanTask.cancel(true);
-
             progressBar.setProgress(100);
             progressBar.dismiss();
 
             Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
             Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
-
-            // todo: disable when img recogniztion ready
-            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
-            scanTask.cancel(true);
-            Log.d("app", "cancel scan task");
 
             if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //p2
@@ -673,12 +677,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F1
+                signalJoinDynamic();
                 analyser_result("Min Kee","fireman");
+
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F2
                 analyser_result("Zi Xun","fireman");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //P1
+                signalJoinDynamic();
                 analyser_result("Seng Guan","police");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
                 //Other
