@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     final String JoinDynamicGroupTrigger = "JoinThisF-ingGroup";
     private AsyncTask<String, Integer, Long> scanTask;
-    final boolean SKIP_IMG_RECOG = true;
 
     public static Camera mCamera;
     private static final String TAG = "mainApp";
@@ -233,11 +232,11 @@ public class MainActivity extends AppCompatActivity {
             // Set once
             Thread.currentThread().setName("Scan Status AsyncTask...");
 
-            while (ZelloWrapper.checkTrigerToJoinGroup(JoinDynamicGroupTrigger)!=true
+            while (ZelloWrapper.checkTriggerToJoinGroup(JoinDynamicGroupTrigger)!=true
                     && !isCancelled()){
             }
 
-            Log.d("app", "exiting backgrnd task");
+            Log.d("app", "exiting background task");
             return 0L;
         }
 
@@ -253,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(Long result) {
-            // Log.d("app", "done");
             Log.d("app", "post execute async");
             connectToFirstResponderGroup();
         }
@@ -267,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        ZelloWrapper.setStatusText(""); // clear status
         Zello.getInstance().unconfigure();
         Log.d("state", "onDestroy");
         super.onDestroy();
@@ -490,10 +489,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (!SKIP_IMG_RECOG){
-            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-            AsyncTaskUploadClassOBJ.execute();
-        }
+        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+        AsyncTaskUploadClassOBJ.execute();
 
     }
 
@@ -583,11 +580,8 @@ public class MainActivity extends AppCompatActivity {
                 return FinalData;
             }
         }
-
-        if (!SKIP_IMG_RECOG){
-            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-            AsyncTaskUploadClassOBJ.execute();
-        }
+        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+        AsyncTaskUploadClassOBJ.execute();
 
     }
 
@@ -613,12 +607,13 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
+                    // todo: disable when img recogniztion ready
                     ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
                     scanTask.cancel(true);
                     Log.d("app", "cancel scan task");
-                    /*
+
                     progressBar.show();
-                    */
+
                 }
             }
         }

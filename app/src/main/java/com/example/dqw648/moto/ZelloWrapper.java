@@ -22,7 +22,13 @@ public class ZelloWrapper {
 
     public static void init(AppCompatActivity activity){
         Zello.getInstance().configure("net.loudtalks", activity);
+        Log.d(tag, "Zello configure");
         resetAllChannel();
+    }
+
+    public static void deinit(){
+        Zello.getInstance().unconfigure();
+        Log.d(tag, "Zello unconfigure");
     }
 
     public static void pttStart(){
@@ -70,24 +76,49 @@ public class ZelloWrapper {
     // TODO: do we really need this????
     private static void resetAllChannel(){
         if (!resetOnce){
-            /* TODO: loop through channel list and disconnect to all, this should be only called
-            once during app lifecycle
-            Zello.getInstance().disconnectChannel(loopChannelNames);
-             */
+            if (myContacts == null){
+                // refresh contacts once
+                myContacts = Zello.getInstance().getContacts();
+            }
+
+            for (int i = 0; i < myContacts.getCount(); i++){
+                Contact curContact = myContacts.getItem(i);
+                ContactType contactType = curContact.getType();
+
+                if (contactType == ContactType.CHANNEL){
+                    String name = curContact.getDisplayName();
+
+                    Zello.getInstance().disconnectChannel(name);
+                    Log.d(tag, String.format("reset channel : %s", name));
+
+                }
+                else{
+                    // do nothing
+                }
+            }
+
             resetOnce = true;
         }
 
     }
 
     // Hidden functions, make it public if needed
+    /*
     private static void selectContact(){
         Zello.getInstance().selectContact("Select a contact", new Tab[]{Tab.RECENTS,
                 Tab.USERS, Tab.CHANNELS}, Tab.RECENTS, Theme.DARK);
     }
 
+
+    private static void setStatus(Status stat){
+        Zello.getInstance().setStatus(stat);
+    }
+    */
+
+
     private static Contacts myContacts = null;
 
-    public static boolean checkTrigerToJoinGroup(String statusMsg){
+    public static boolean checkTriggerToJoinGroup(String statusMsg){
         if (myContacts == null){
             // refresh contacts once
             myContacts = Zello.getInstance().getContacts();
@@ -115,10 +146,6 @@ public class ZelloWrapper {
 
     public static void setStatusText(String text){
         Zello.getInstance().setStatusMessage(text);
-    }
-
-    public static void setStatus(Status stat){
-        Zello.getInstance().setStatus(stat);
     }
 
 }
