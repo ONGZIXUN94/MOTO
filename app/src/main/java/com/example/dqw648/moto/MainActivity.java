@@ -157,10 +157,12 @@ public class MainActivity extends AppCompatActivity {
             while (init_data.moveToNext()) {
                 user = new User(init_data.getString(1), init_data.getString(2), init_data.getString(3));
 
-                if(init_data.getString(3).equals(user_team))
+                if(init_data.getString(3).equals(user_team) && user_team.equals("fireman"))
                 {
+                    num_polis++;
                     count++;
-                }else if(init_data.getString(3).equals(user_team)){
+                }else if(init_data.getString(3).equals(user_team) && user_team.equals("police")){
+                    num_fireman++;
                     count++;
                 }
 
@@ -469,10 +471,6 @@ public class MainActivity extends AppCompatActivity {
                     if(prediction.equalsIgnoreCase("FiremanBadge")|| prediction.equalsIgnoreCase("FiremanCap") || prediction.equalsIgnoreCase("FiremanUniform")) {
                         finalFireman = "fireman";
                     }
-                    else if(prediction.equals("FiremanMinkee"))
-                    {
-                        finalFireman = "fireman_MK";
-                    }
                     else{
                         finalFireman = "Others";
                     }
@@ -578,10 +576,6 @@ public class MainActivity extends AppCompatActivity {
                     if (prediction.equalsIgnoreCase("PolicemanBadge") || prediction.equalsIgnoreCase("PolicemanCap") || prediction.equalsIgnoreCase("PolicemanUniform")) {
                         finalPoliceman = "police";
                     }
-                    else if(prediction.equals("PolicemanSengGuan"))
-                    {
-                        finalPoliceman = "police_SG";
-                    }
                     else {
                         finalPoliceman = "Others";
                     }
@@ -645,11 +639,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
-                    // todo: disable when img recogniztion ready
-                    ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
-                    scanTask.cancel(true);
-                    Log.d("app", "cancel scan task");
-
                     progressBar.show();
 
                 }
@@ -671,9 +660,14 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
             Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
 
+            // todo: disable when img recogniztion ready
+            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+            scanTask.cancel(true);
+            Log.d("app", "cancel scan task");
+
             if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //p2
-                analyser_result("Shu Yang","fireman");
+                analyser_result("Shu Yang","police");
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
                 //other
                 Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
