@@ -57,8 +57,9 @@ import static com.example.dqw648.moto.R.id.tv_result;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String DynamicGroupName = "JoinThisF-ingGroup";
+    final String JoinDynamicGroupTrigger = "JoinThisF-ingGroup";
     private AsyncTask<String, Integer, Long> scanTask;
+    final boolean SKIP_IMG_RECOG = true;
 
     public static Camera mCamera;
     private static final String TAG = "mainApp";
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("state", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -211,16 +213,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d("state", "onStart");
         ZelloWrapper.setStatusText(""); // Clear status message
-        scanTask = new ScanStatusTask().execute("");
+        if (scanTask == null){
+            Log.d("app", "execute scan task");
+            scanTask = new ScanStatusTask().execute("");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("state", "onStop");
+        super.onStop();
     }
 
     class ScanStatusTask extends AsyncTask<String, Integer, Long> {
         protected Long doInBackground(String... strings) {
-            while (ZelloWrapper.checkTrigerToJoinGroup(DynamicGroupName)!=true
+
+            // Set once
+            Thread.currentThread().setName("Scan Status AsyncTask...");
+
+            while (ZelloWrapper.checkTrigerToJoinGroup(JoinDynamicGroupTrigger)!=true
                     && !isCancelled()){
             }
 
+            Log.d("app", "exiting backgrnd task");
             return 0L;
         }
 
@@ -230,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(Long result) {
             // Log.d("app", "done");
+            Log.d("app", "post execute async");
             connectToFirstResponderGroup();
         }
 
@@ -242,8 +260,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         Zello.getInstance().unconfigure();
+        Log.d("state", "onDestroy");
+        super.onDestroy();
+    }
+
+    /**
+     * Dispatch onResume() to fragments.  Note that for better inter-operation
+     * with older versions of the platform, at the point of this call the
+     * fragments attached to the activity are <em>not</em> resumed.  This means
+     * that in some cases the previous state may still be saved, not allowing
+     * fragment transactions that modify the state.  To correctly interact
+     * with fragments in their proper state, you should instead override
+     * {@link #onResumeFragments()}.
+     */
+    @Override
+    protected void onResume() {
+        Log.d("state", "onResume");
+        super.onResume();
     }
 
     public void analyser_result(String get_name, String get_identity){
@@ -448,9 +482,12 @@ public class MainActivity extends AppCompatActivity {
                 return FinalData;
             }
         }
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
 
-        AsyncTaskUploadClassOBJ.execute();
+        if (!SKIP_IMG_RECOG){
+            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+            AsyncTaskUploadClassOBJ.execute();
+        }
+
     }
 
     public void ImageUploadToServerFunction2(){
@@ -539,9 +576,12 @@ public class MainActivity extends AppCompatActivity {
                 return FinalData;
             }
         }
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
 
-        AsyncTaskUploadClassOBJ.execute();
+        if (!SKIP_IMG_RECOG){
+            AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+            AsyncTaskUploadClassOBJ.execute();
+        }
+
     }
 
     @Override
@@ -566,11 +606,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("ImageUpload","call send upload");
                     ImageUploadToServerFunction2();
 
-                    ZelloWrapper.setStatusText(DynamicGroupName);
+                    ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
                     scanTask.cancel(true);
+                    Log.d("app", "cancel scan task");
+                    /*
                     progressBar.show();
-
-
+                    */
                 }
             }
         }
@@ -580,6 +621,10 @@ public class MainActivity extends AppCompatActivity {
 
         if(Police == true && Fireman == true)
         {
+            // test code
+            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+            scanTask.cancel(true);
+
             progressBar.setProgress(100);
             progressBar.dismiss();
             if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
