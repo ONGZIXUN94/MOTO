@@ -245,6 +245,13 @@ public class MainActivity extends AppCompatActivity {
             // setProgressPercent(progress[0]);
         }
 
+        @Override
+        protected void onCancelled() {
+            Log.d("app", "scan task is cancelled");
+            connectToFirstResponderGroup();
+            super.onCancelled();
+        }
+
         protected void onPostExecute(Long result) {
             // Log.d("app", "done");
             Log.d("app", "post execute async");
