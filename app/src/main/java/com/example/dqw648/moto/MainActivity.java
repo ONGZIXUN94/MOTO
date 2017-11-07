@@ -530,7 +530,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... params) {
 
-                /* todo: restore this
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
 
                 HashMap<String,String> HashMapParams = new HashMap<String,String>();
@@ -543,14 +542,6 @@ public class MainActivity extends AppCompatActivity {
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
 
                 return FinalData;
-                */
-                try {
-                    Thread.sleep(1400);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // todo remove this
-                return "{ prediction : others }";
             }
         }
 
@@ -631,9 +622,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected String doInBackground(Void... params) {
-
-                /*
-                todo restore
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
 
                 HashMap<String,String> HashMapParams = new HashMap<String,String>();
@@ -646,15 +634,6 @@ public class MainActivity extends AppCompatActivity {
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath2, HashMapParams);
 
                 return FinalData;
-                */
-
-                // todo remove
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return "{ prediction : PolicemanBadge }";
             }
         }
         AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
