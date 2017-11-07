@@ -34,6 +34,7 @@ public class CameraView extends AppCompatActivity implements SurfaceHolder.Callb
     public static final String EXTRA_CAMERA_DATA = "camera_data";
     private static final String KEY_IS_CAPTURING = "is_capturing";
     private Button captureButton, doneButton;
+    private boolean captured = false;
 
     private boolean mIsCapturing;
     @Override
@@ -47,6 +48,7 @@ public class CameraView extends AppCompatActivity implements SurfaceHolder.Callb
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         mIsCapturing = true;
+        captured = false;
 
         // Add a listener to the Capture button
         captureButton = (Button) findViewById(R.id.capture_button);
@@ -60,8 +62,16 @@ public class CameraView extends AppCompatActivity implements SurfaceHolder.Callb
     private View.OnClickListener mCaptureImageButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.i(TAG,"take picture");
-            MainActivity.mCamera.takePicture(null, null, mPicture);
+            if(captured == false)
+            {
+                Log.i(TAG,"take picture");
+                MainActivity.mCamera.takePicture(null, null, mPicture);
+                captured = true;
+            }
+            else
+            {/*nothing to handle need to wait until user press DONE button or back button*/
+
+            }
         }
     };
 
@@ -169,6 +179,7 @@ public class CameraView extends AppCompatActivity implements SurfaceHolder.Callb
     protected void onResume() {
         super.onResume();
 
+        captured = false;
         if (MainActivity.mCamera == null) {
             try {
                 MainActivity.mCamera = Camera.open();
