@@ -15,7 +15,6 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -34,8 +33,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zello.sdk.Zello;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -256,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        ZelloWrapper.setStatusText(""); // clear status
         Log.d("state", "onStop");
         super.onStop();
     }
@@ -368,13 +370,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if(get_name.equals(data.getString(1)) && get_identity.equals(data.getString(3))){
-                    cur_name[analyser_count] = "Name: " + get_name;
-                    cur_coreid[analyser_count] = "CoreID: " + data.getString(2);
-                    cur_identity[analyser_count] = "Team: " + get_identity;
-                    call_mode[analyser_count] = "1";
-                    data_list.add(user);
-                }
+//                if(get_name.equals(data.getString(1)) && get_identity.equals(data.getString(3))){
+//                    cur_name[analyser_count] = "Name: " + get_name;
+//                    cur_coreid[analyser_count] = "CoreID: " + data.getString(2);
+//                    cur_identity[analyser_count] = "Team: " + get_identity;
+//                    call_mode[analyser_count] = "1";
+//                    data_list.add(user);
+//                }
             }
             lv_identity.setAdapter(new MyListAdapter(this, R.layout.result_after_snapshot_list, data_list));
         }
@@ -421,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         }else if(cur_name[position].equals("Team: fireman")){
                             name = "FiremanTeam";
                         } else{
-                            name = cur_name[position];
+                            name = cur_name[position].replace("Name: ", "");
                         }
 
                         int mode = Integer.parseInt(call_mode[position]);
@@ -434,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent ptt_interface = new Intent(MainActivity.this,PTT_Call.class);
                         ptt_interface.putExtra("mode",call_mode[position]);
-                        ptt_interface.putExtra("username",cur_name[position]);
+                        ptt_interface.putExtra("username",name);
                         startActivity(ptt_interface);
                     }
                 });
@@ -692,6 +694,11 @@ public class MainActivity extends AppCompatActivity {
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F1
                 ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+                try {
+                    ZelloWrapper.configureCall(2, "ONEMERIDIAN");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Toast.makeText(MainActivity.this, "Connect to dymanic group", Toast.LENGTH_SHORT).show();
                 analyser_result("Min Kee","fireman");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
@@ -700,6 +707,11 @@ public class MainActivity extends AppCompatActivity {
             }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //P1
                 ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+                try {
+                    ZelloWrapper.configureCall(2, "ONEMERIDIAN");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Toast.makeText(MainActivity.this, "Connect to dymanic group", Toast.LENGTH_SHORT);
                 analyser_result("Seng Guan","police");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
@@ -811,7 +823,7 @@ public class MainActivity extends AppCompatActivity {
             String channelName = intent.getStringExtra(ScanMsgSvc.PARAM_OUT_MSG);
 
             if (channelName.contentEquals(JoinDynamicGroupTrigger)){
-                Toast.makeText(MainActivity.this, String.format("Connect to %s", channelName), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, String.format("Connect to Dynamic Group"), Toast.LENGTH_SHORT).show();
                 try{
                     ZelloWrapper.configureCall(2, "ONEMERIDIAN");
                 } catch (Exception ex){

@@ -44,27 +44,11 @@ public class PTT_Call extends AppCompatActivity {
 
         layout = (RelativeLayout)findViewById(R.id.ptt_background);
 
-        if(detected_username.equals("Area Team")){
-            detected_username = "ONEMERIDIAN";
-        }else if(detected_username.equals("police")){
-            detected_username = "PoliceTeam";
-        }else if(detected_username.equals("fireman")){
-            detected_username = "FiremanTeam";
-        }
-
         try{
             call_mode = Integer.parseInt(detected_callmode);
         }catch(NumberFormatException nfe){
             Log.i("test", "call mode test");
         }
-
-        /* configure at main activity
-        try{
-            ZelloWrapper.configureCall(call_mode,detected_username);
-        }catch(Exception e){
-            Log.i("test", "call mode test");
-        }
-*/
 
         tv_callname.setText(detected_username);
         tv_callmode.setText(detected_callmode);
