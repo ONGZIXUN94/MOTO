@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
     String ImagePath = "image_path" ;
     //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
     //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
-    String ServerUploadPath ="http://172.20.10.5:10080/first_responder/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="http://172.20.10.5:10080/first_responder/img_upload_to_server_police.php" ;
+    String ServerUploadPath ="http://150.130.65.78:10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://150.130.65.78:10080/first_responder/img_upload_to_server_police.php" ;
     public String finalFireman = "";
     public String finalPoliceman = "";
     Boolean Fireman, Police;
@@ -647,6 +647,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if (resultCode == RESULT_OK) {
                 if (CameraView.mCameraData != null) {
+                    if (mServiceIntent !=null){
+                        this.stopService(mServiceIntent);
+                    }
                     mCameraBitmap = BitmapFactory.decodeByteArray(CameraView.mCameraData, 0, CameraView.mCameraData.length);
                     Matrix mat = new Matrix();
                     mat.postRotate(90);
