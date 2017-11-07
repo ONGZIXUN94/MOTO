@@ -3,8 +3,10 @@ package com.example.dqw648.moto;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -58,8 +61,10 @@ import static com.example.dqw648.moto.ZelloWrapper.getThisUserName;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String JoinDynamicGroupTrigger = "JoinThisF-ingGroup";
-    private AsyncTask<String, Integer, Long> scanTask;
+    final String JoinDynamicGroupTrigger = "dskadh872913kasdiudai";
+    // private AsyncTask<String, Integer, Long> scanTask;
+    private ResponseReceiver receiver;
+    private Intent mServiceIntent;
 
     public static Camera mCamera;
     private static final String TAG = "mainApp";
@@ -93,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
     String ImagePath = "image_path" ;
     //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
     //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
-    String ServerUploadPath ="http://172.20.10.5:10080/first_responder/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="http://172.20.10.5:10080/first_responder/img_upload_to_server_police.php" ;
+    String ServerUploadPath ="http://150.130.65.78:10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://150.130.65.78:10080/first_responder/img_upload_to_server_police.php" ;
     public String finalFireman = "";
     public String finalPoliceman = "";
     Boolean Fireman, Police;
@@ -117,6 +122,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ZelloWrapper.init(this);
+
+        IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new ResponseReceiver();
+        registerReceiver(receiver, filter);
+
         //Button
         btn_camera = (ImageButton) findViewById(R.id.btn_camera);
 
@@ -228,10 +239,19 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d("state", "onStart");
         ZelloWrapper.setStatusText(""); // Clear status message
+        /*
         if (scanTask == null){
             Log.d("app", "execute scan task");
             scanTask = new ScanStatusTask().execute("");
         }
+        */
+
+        if (mServiceIntent == null){
+            mServiceIntent = new Intent(this, ScanMsgSvc.class);
+            mServiceIntent.putExtra(ScanMsgSvc.PARAM_IN_MSG, JoinDynamicGroupTrigger);
+            this.startService(mServiceIntent);
+        }
+
     }
 
     @Override
@@ -282,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
         ZelloWrapper.setStatusText(""); // clear status
         Zello.getInstance().unconfigure();
         Log.d("state", "onDestroy");
+        unregisterReceiver(receiver);
         super.onDestroy();
     }
 
@@ -390,6 +411,27 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.btn_view_result.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                        // configure group call here...
+                        String name = "";
+                        if(cur_name[position].equals("Team: Area Team")){
+                            name = "ONEMERIDIAN";
+                        }else if(cur_name[position].equals("Team: police")){
+                            name = "PoliceTeam";
+                        }else if(cur_name[position].equals("Team: fireman")){
+                            name = "FiremanTeam";
+                        } else{
+                            name = cur_name[position];
+                        }
+
+                        int mode = Integer.parseInt(call_mode[position]);
+
+                        try{
+                            ZelloWrapper.configureCall(mode, name);
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
                         Intent ptt_interface = new Intent(MainActivity.this,PTT_Call.class);
                         ptt_interface.putExtra("mode",call_mode[position]);
                         ptt_interface.putExtra("username",cur_name[position]);
@@ -580,7 +622,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected String doInBackground(Void... params) {
-
                 ImageProcessClass imageProcessClass = new ImageProcessClass();
 
                 HashMap<String,String> HashMapParams = new HashMap<String,String>();
@@ -606,6 +647,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if (resultCode == RESULT_OK) {
                 if (CameraView.mCameraData != null) {
+                    if (mServiceIntent !=null){
+                        this.stopService(mServiceIntent);
+                    }
                     mCameraBitmap = BitmapFactory.decodeByteArray(CameraView.mCameraData, 0, CameraView.mCameraData.length);
                     Matrix mat = new Matrix();
                     mat.postRotate(90);
@@ -633,20 +677,11 @@ public class MainActivity extends AppCompatActivity {
 
         if(Police == true && Fireman == true)
         {
-            // test code
-            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
-            scanTask.cancel(true);
-
             progressBar.setProgress(100);
             progressBar.dismiss();
 
             Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
             Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
-
-            // todo: disable when img recogniztion ready
-            ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
-            scanTask.cancel(true);
-            Log.d("app", "cancel scan task");
 
             if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //p2
@@ -656,15 +691,19 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F1
+                ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+                Toast.makeText(MainActivity.this, "Connect to dymanic group", Toast.LENGTH_SHORT).show();
                 analyser_result("Min Kee","fireman");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F2
                 analyser_result("Zi Xun","fireman");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //P1
+                ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
+                Toast.makeText(MainActivity.this, "Connect to dymanic group", Toast.LENGTH_SHORT);
                 analyser_result("Seng Guan","police");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
-                //Other
+                //Others
                 Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
             }
         }
@@ -760,6 +799,35 @@ public class MainActivity extends AppCompatActivity {
             return stringBuilderObject.toString();
         }
 
+    }
+
+    public class ResponseReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESP =
+                "com.com.example.dqw648.moto.ScanMsgSvc.MESSAGE_PROCESSED";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("app", "received from broadcast");
+            String channelName = intent.getStringExtra(ScanMsgSvc.PARAM_OUT_MSG);
+
+            if (channelName.contentEquals(JoinDynamicGroupTrigger)){
+                Toast.makeText(MainActivity.this, String.format("Connect to %s", channelName), Toast.LENGTH_SHORT).show();
+                try{
+                    ZelloWrapper.configureCall(2, "ONEMERIDIAN");
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
+                // police
+                if (user_team.contentEquals("police")){
+                    analyser_result("Min Kee", "fireman");
+                }else{
+                    analyser_result("Seng Guan", "police");
+                }
+
+
+            }
+        }
     }
 
 }

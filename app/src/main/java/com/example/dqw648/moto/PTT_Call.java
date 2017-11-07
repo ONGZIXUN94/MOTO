@@ -58,12 +58,13 @@ public class PTT_Call extends AppCompatActivity {
             Log.i("test", "call mode test");
         }
 
+        /* configure at main activity
         try{
             ZelloWrapper.configureCall(call_mode,detected_username);
         }catch(Exception e){
             Log.i("test", "call mode test");
         }
-
+*/
 
         tv_callname.setText(detected_username);
         tv_callmode.setText(detected_callmode);
