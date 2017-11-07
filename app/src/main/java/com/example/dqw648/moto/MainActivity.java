@@ -414,12 +414,14 @@ public class MainActivity extends AppCompatActivity {
 
                         // configure group call here...
                         String name = "";
-                        if(cur_name[position].equals("Area Team")){
+                        if(cur_name[position].equals("Team: Area Team")){
                             name = "ONEMERIDIAN";
-                        }else if(cur_name[position].equals("police")){
+                        }else if(cur_name[position].equals("Team: police")){
                             name = "PoliceTeam";
-                        }else if(cur_name[position].equals("fireman")){
+                        }else if(cur_name[position].equals("Team: fireman")){
                             name = "FiremanTeam";
+                        } else{
+                            name = cur_name[position];
                         }
 
                         int mode = Integer.parseInt(call_mode[position]);
@@ -828,6 +830,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (channelName.contentEquals(JoinDynamicGroupTrigger)){
                 Toast.makeText(MainActivity.this, String.format("Connect to %s", channelName), Toast.LENGTH_SHORT).show();
+                try{
+                    ZelloWrapper.configureCall(2, "ONEMERIDIAN");
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }
 
                 // police
                 if (user_team.contentEquals("police")){
