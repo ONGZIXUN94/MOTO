@@ -727,6 +727,9 @@ public class MainActivity extends AppCompatActivity {
             }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("fireman")){
                 //Others
                 analyser_result("Min Kee","fireman");
+            }else if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("fireman")){
+                //Others
+                analyser_result("Min Kee","fireman");
             }
         }
 
