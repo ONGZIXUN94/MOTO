@@ -649,9 +649,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if (resultCode == RESULT_OK) {
                 if (CameraView.mCameraData != null) {
-                    if (mServiceIntent !=null){
-                        this.stopService(mServiceIntent);
-                    }
+//                    if (mServiceIntent !=null){
+//                        this.stopService(mServiceIntent);
+//                    }
                     mCameraBitmap = BitmapFactory.decodeByteArray(CameraView.mCameraData, 0, CameraView.mCameraData.length);
                     Matrix mat = new Matrix();
                     mat.postRotate(90);
@@ -689,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
                 //p2
                 analyser_result("Shu Yang","police");
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
-                //other
+                //analyser_result("",user_team);
                 Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F1
@@ -716,6 +716,7 @@ public class MainActivity extends AppCompatActivity {
                 analyser_result("Seng Guan","police");
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
                 //Others
+               // analyser_result("",user_team);
                 Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
             }
         }
