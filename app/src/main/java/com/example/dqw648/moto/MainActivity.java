@@ -97,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
     boolean check = true;
     String ImageName = "image_name" ;
     String ImagePath = "image_path" ;
+    String main_ip = "192.168.43.172";
     //String ServerUploadPath ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server.php" ;
     //String ServerUploadPath2 ="https://androidlibrary.000webhostapp.com/LibraryApp/development/img_upload_to_server_police.php";
-    String ServerUploadPath ="http://150.130.65.78:10080/first_responder/img_upload_to_server.php" ;
-    String ServerUploadPath2 ="http://150.130.65.78:10080/first_responder/img_upload_to_server_police.php" ;
+    String ServerUploadPath ="http://"+ main_ip +":10080/first_responder/img_upload_to_server.php" ;
+    String ServerUploadPath2 ="http://"+ main_ip +":10080/first_responder/img_upload_to_server_police.php" ;
     public String finalFireman = "";
     public String finalPoliceman = "";
     Boolean Fireman, Police;
@@ -141,6 +142,14 @@ public class MainActivity extends AppCompatActivity {
 
         Cursor init_data = myDB.getListContents();
 
+        Bundle from_uploadimage = getIntent().getExtras();
+
+        if(from_uploadimage != null){
+            main_ip = from_uploadimage.getString("IP");
+            ServerUploadPath ="http://" + main_ip + ":10080/first_responder/img_upload_to_server.php" ;
+            ServerUploadPath2 ="http://" + main_ip + ":10080/first_responder/img_upload_to_server_police.php" ;
+        }
+
         //Initialization
         int Rows = init_data.getCount();
         String cur_username = getThisUserName();
@@ -154,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
         }else if(cur_username.equals("zixun")){
             user_acc_name = "Zi Xun";
         }
-        Toast.makeText(MainActivity.this,user_acc_name,Toast.LENGTH_SHORT).show();
 
         if(user_acc_name.equals("Seng Guan") || user_acc_name.equals("Shu Yang")){
             user_team = "police";
@@ -463,6 +471,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void imgUpload(View view){
         Intent UploadImage = new Intent(MainActivity.this, UploadImage.class);
+        if(main_ip != null){
+            UploadImage.putExtra("old_address", main_ip);
+        }
         startActivity(UploadImage);
     }
 
@@ -682,15 +693,11 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setProgress(100);
             progressBar.dismiss();
 
-            Toast.makeText(MainActivity.this,finalFireman,Toast.LENGTH_LONG).show();
-            Toast.makeText(MainActivity.this,finalPoliceman,Toast.LENGTH_LONG).show();
-
             if(user_team.equals("police") && finalPoliceman.equals("police") && finalFireman.equals("Others")){
                 //p2
                 analyser_result("Shu Yang","police");
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
                 //analyser_result("",user_team);
-                Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
             }else if(user_team.equals("police") && finalPoliceman.equals("Others") && finalFireman.equals("fireman")){
                 //F1
                 ZelloWrapper.setStatusText(JoinDynamicGroupTrigger);
@@ -717,7 +724,9 @@ public class MainActivity extends AppCompatActivity {
             }else if(user_team.equals("fireman") && finalPoliceman.equals("Others") && finalFireman.equals("Others")){
                 //Others
                // analyser_result("",user_team);
-                Toast.makeText(MainActivity.this,"This is others",Toast.LENGTH_LONG).show();
+            }else if(user_team.equals("fireman") && finalPoliceman.equals("police") && finalFireman.equals("fireman")){
+                //Others
+                analyser_result("Min Kee","fireman");
             }
         }
 

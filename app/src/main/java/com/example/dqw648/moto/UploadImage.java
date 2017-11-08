@@ -1,34 +1,35 @@
 package com.example.dqw648.moto;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import java.io.BufferedReader;
-import java.net.URLEncoder;
-import java.util.Map;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
-import java.io.UnsupportedEncodingException;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by KVM768 on 10/21/2017.
@@ -38,13 +39,15 @@ public class UploadImage extends AppCompatActivity{
 
     Bitmap bitmap;
 
+    public String ip_address;
+
     boolean check = true;
 
-    Button SelectImageGallery, UploadImageServer;
+    Button SelectImageGallery, UploadImageServer,btn_ip;
 
     ImageView imageView;
 
-    EditText imageName;
+    EditText imageName,et_ip_address;
 
     ProgressDialog progressDialog ;
 
@@ -61,6 +64,9 @@ public class UploadImage extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload_image);
 
+        btn_ip = (Button)findViewById(R.id.btn_ip);
+        et_ip_address = (EditText)findViewById(R.id.et_ip_address);
+
         imageView = (ImageView)findViewById(R.id.imageView);
 
         imageName = (EditText)findViewById(R.id.editTextImageName);
@@ -68,6 +74,27 @@ public class UploadImage extends AppCompatActivity{
         SelectImageGallery = (Button)findViewById(R.id.buttonSelect);
 
         UploadImageServer = (Button)findViewById(R.id.buttonUpload);
+
+        Bundle from_main = getIntent().getExtras();
+
+        if(from_main != null){
+            String old_IP = from_main.getString("old_address");
+            et_ip_address.setText(old_IP);
+        }
+
+        btn_ip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ip_address = et_ip_address.getText().toString();
+                if(ip_address!= null){
+                    Intent pass_ip = new Intent(UploadImage.this,MainActivity.class);
+                    pass_ip.putExtra("IP", ip_address);
+                    startActivity(pass_ip);
+                }else{
+                    Toast.makeText(UploadImage.this,"Invalid IP Address",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         SelectImageGallery.setOnClickListener(new View.OnClickListener() {
             @Override

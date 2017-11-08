@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ptt_button2"
+    android:background="@drawable/ptt_button1"
     android:id="@+id/ptt_background"
     tools:context="com.example.dqw648.moto.PTT_Call">
 
